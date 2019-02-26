@@ -57,7 +57,7 @@ public class Field implements IField {
 
     @Override
     public String getPlayerId(int column, int row) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return board[column][row];
     }
 
     @Override
@@ -72,27 +72,36 @@ public class Field implements IField {
 
     @Override
     public Boolean isInActiveMicroboard(int x, int y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int macroboardXPosition = x/3;
+        int macroboardYPosition = y/3;
+        if(macroboard[macroboardXPosition][macroboardYPosition] == AVAILABLE_FIELD)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     @Override
     public String[][] getBoard() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return board;
     }
 
     @Override
     public String[][] getMacroboard() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return macroboard;
     }
 
     @Override
     public void setBoard(String[][] board) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.board = board;
     }
 
     @Override
     public void setMacroboard(String[][] macroboard) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.macroboard = macroboard;
     }
     
 }
