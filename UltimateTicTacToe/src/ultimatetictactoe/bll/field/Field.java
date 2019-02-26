@@ -5,8 +5,10 @@
  */
 package ultimatetictactoe.bll.field;
 
+import java.util.ArrayList;
 import java.util.List;
 import ultimatetictactoe.bll.move.IMove;
+import ultimatetictactoe.bll.move.Move;
 
 /**
  *
@@ -24,17 +26,17 @@ public class Field implements IField {
 
     @Override
     public void clearBoard() {
-        clearMicroboard();
+        clearMicroboards();
         clearMacroboard();        
     }
     
-    private void clearMicroboard()
+    private void clearMicroboards()
     {
         for(int i = 0; i < board.length; i++)
         {
             for(int j = 0; j < board[i].length; j++)
             {
-                board[i][j] = AVAILABLE_FIELD;
+                board[i][j] = EMPTY_FIELD;
             }
         }
     }
@@ -52,7 +54,38 @@ public class Field implements IField {
 
     @Override
     public List<IMove> getAvailableMoves() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<IMove> availableMoves = new ArrayList();
+        for(int i = 0; i < macroboard.length; i++)
+        {
+            for(int j = 0; j < macroboard[i].length; j++)
+            {
+                if(macroboard[i][j] == AVAILABLE_FIELD)
+                {
+                    availableMoves.addAll(getAvailableMovesFromMicroboard(i, j));
+                }
+            }
+        }
+        return availableMoves;
+    }
+    
+    private List<IMove> getAvailableMovesFromMicroboard(int microboardXPosition, int microboardYPosition)
+    {
+        List<IMove> availableMoves = new ArrayList();
+        int startingXPosition = microboardXPosition*3;
+        int endingXPosition = startingXPosition + 2;
+        int startingYPosition = microboardYPosition*3;
+        int endingYPosition = startingYPosition + 2;
+        for(int i = startingXPosition; i <= endingXPosition; i++)
+        {
+            for(int j = startingYPosition; j <= endingYPosition; j++)
+            {
+                if(board[i][j] == EMPTY_FIELD)
+                {
+                    availableMoves.add(new Move(i, j));
+                }
+            }
+        }
+        return availableMoves;
     }
 
     @Override
