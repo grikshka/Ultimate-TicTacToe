@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="ultimatetictactoe.gui.controller.MainMenuViewController">
+   <children>
+      <StackPane prefHeight="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label prefHeight="80.0" prefWidth="249.0" text="Ultimate Tic-Tac-Toe">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
+      <StackPane maxHeight="600.0" maxWidth="800.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="150.0">
+         <children>
+            <VBox maxHeight="500.0" maxWidth="800.0">
+               <children>
+                  <StackPane prefHeight="10000.0">
+                     <children>
+                        <JFXButton onAction="#clickPlayerVsPlayer" prefHeight="80.0" prefWidth="350.0" text="Player vs Player">
+                           <StackPane.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </StackPane.margin>
+                        </JFXButton>
+                     </children>
+                  </StackPane>
+                  <StackPane prefHeight="10000.0">
+                     <children>
+                        <JFXButton onAction="#clickPlayerVsAi" prefHeight="80.0" prefWidth="350.0" text="Player vs AI" />
+                     </children>
+                  </StackPane>
+                  <StackPane prefHeight="10000.0">
+                     <children>
+                        <JFXButton onAction="#clickAiVsAi" prefHeight="80.0" prefWidth="350.0" text="AI vs AI" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="50.0" />
+                     </VBox.margin>
+                  </StackPane>
+               </children>
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+            </VBox>
+         </children>
+      </StackPane>
+      <StackPane minHeight="80.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <JFXButton onAction="#clickExit" prefHeight="40.0" prefWidth="150.0" text="Exit">
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+            </JFXButton>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>
