@@ -1,6 +1,7 @@
 package ultimatetictactoe.bll.game;
 
 import ultimatetictactoe.bll.bot.IBot;
+import ultimatetictactoe.bll.field.IField;
 import ultimatetictactoe.bll.move.IMove;
 
 /**
@@ -123,22 +124,78 @@ public class GameManager {
     
     private Boolean verifyMoveLegality(IMove move)
     {
-        //Test if the move is legal   
-        //NOTE: should also check whether the move is placed on an occupied spot.
-        System.out.println("Checking move validity against macroboard available field");
-        System.out.println("Not currently checking move validity actual board");
-        return currentState.getField().isInActiveMicroboard(move.getX(), move.getY());
+        if(currentState.getField().isInActiveMicroboard(move.getX(), move.getY()))
+        {
+            for(IMove availableMove : currentState.getField().getAvailableMoves())
+            {
+                if(move.getX() == availableMove.getX() && move.getY() == availableMove.getY())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     private void updateBoard(IMove move)
     {
-       //TODO: Update the board to the new state 
-        throw new UnsupportedOperationException("Not supported yet."); 
+       String[][] board = currentState.getField().getBoard();
+       board[move.getX()][move.getY()] = currentPlayer + "";
     }
     
     private void updateMacroboard(IMove move)
     {
-       //TODO: Update the macroboard to the new state 
-       throw new UnsupportedOperationException("Not supported yet."); 
+       int activeMicroboardX = move.getX()%3;
+       int activeMicroboardY = move.getY()%3;
+       String[][] macroboard = currentState.getField().getMacroboard();
+       if((macroboard[activeMicroboardX][activeMicroboardY] == IField.AVAILABLE_FIELD 
+               || macroboard[activeMicroboardX][activeMicroboardY] == IField.EMPTY_FIELD))
+       {
+           setAvailableMicroboard(activeMicroboardX, activeMicroboardY);
+       }
+       else
+       {
+           setAllMicroboardsAvailable();
+       }
+       
+    }
+    
+    private void setAvailableMicroboard(int activeMicroboardX, int activeMicroboardY)
+    {
+        String[][] macroboard = currentState.getField().getMacroboard();
+        for(int i = 0; i < 3; i++)
+           {
+               for(int j = 0; j < 3; j++)
+               {
+                   if(i == activeMicroboardX && j == activeMicroboardY)
+                   {
+                       macroboard[i][j] = IField.AVAILABLE_FIELD;
+                   }
+                   else if(macroboard[i][j] == IField.AVAILABLE_FIELD)
+                   {
+                       macroboard[i][j] = IField.EMPTY_FIELD;
+                   }
+               }
+           }
+    }
+    
+    private void setAllMicroboardsAvailable()
+    {
+        String[][] macroboard = currentState.getField().getMacroboard();
+        for(int i = 0; i < 3; i++)
+           {
+               for(int j = 0; j < 3; j++)
+               {
+                   if(macroboard[i][j] == IField.EMPTY_FIELD)
+                   {
+                       macroboard[i][j] = IField.AVAILABLE_FIELD;
+                   }
+               }
+           }
+    }
+    
+    public int getCurrentPlayer()
+    {
+        return currentPlayer;
     }
 }
