@@ -22,7 +22,7 @@ public class UltimateTicTacToe extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/ultimatetictactoe/gui/view/MainMenuView.fxml"));
         
         Scene scene = new Scene(root);
-        
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
     }
