@@ -5,9 +5,12 @@
  */
 package ultimatetictactoe.gui.model;
 
+import java.util.List;
 import ultimatetictactoe.bll.bot.IBot;
 import ultimatetictactoe.bll.game.GameManager;
 import ultimatetictactoe.bll.game.GameState;
+import ultimatetictactoe.bll.game.IGameState;
+import ultimatetictactoe.bll.move.IMove;
 
 /**
  *
@@ -16,6 +19,7 @@ import ultimatetictactoe.bll.game.GameState;
 public class GameModel {
     
     private GameManager game;
+    private IGameState gameState;
     private static GameModel instance;
     
     private GameModel()
@@ -34,19 +38,25 @@ public class GameModel {
     
     public void newPlayerVsPlayerGame()
     {
-        game = new GameManager(new GameState());
+        gameState = new GameState();
+        game = new GameManager(gameState);
     }
     
     public void newPlayerVsBotGame(IBot bot)
     {
-        game = new GameManager(new GameState(), bot);
+        gameState = new GameState();
+        game = new GameManager(gameState, bot);
     }
     
     public void newBotVsBotGame(IBot bot1, IBot bot2)
     {
-        game = new GameManager(new GameState(), bot1, bot2);
+        gameState = new GameState();
+        game = new GameManager(gameState, bot1, bot2);
     }
     
-    
+    public List<IMove> getAvailableMoves()
+    {
+        return gameState.getField().getAvailableMoves();
+    }
     
 }
