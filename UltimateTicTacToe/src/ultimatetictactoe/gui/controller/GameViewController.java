@@ -140,10 +140,11 @@ public class GameViewController implements Initializable {
     
     private void performPlayerMove(int fieldXPosition, int fieldYPosition)
     {
+        int currentPlayer = model.getCurrentPlayer();
         if(model.performPlayerMove(fieldXPosition, fieldYPosition))
         {
             Button field = board.get(fieldXPosition).get(fieldYPosition);
-            if(model.getCurrentPlayer() == 0)
+            if(currentPlayer == 0)
             {
                 field.setText("X");
             }
