@@ -5,10 +5,18 @@
  */
 package ultimatetictactoe.bll.bot;
 
+import ultimatetictactoe.bll.game.IGameState;
+import ultimatetictactoe.bll.move.IMove;
+
 /**
  *
  * @author nedas
  */
-public class Bot {
+public class Bot implements IBot {
+
+    @Override
+    public IMove doMove(IGameState state) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
