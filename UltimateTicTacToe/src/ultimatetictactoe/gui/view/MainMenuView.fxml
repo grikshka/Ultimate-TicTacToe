@@ -40,12 +40,12 @@
                               <Insets left="30.0" right="30.0" />
                            </HBox.margin>
                         </ToggleButton>
-                        <ToggleButton fx:id="btnPlayerVsAi" mnemonicParsing="false" onAction="#clickPlayerVsAi" prefHeight="40.0" prefWidth="200.0" text="Player vs AI" toggleGroup="$GameMode">
+                        <ToggleButton fx:id="btnPlayerVsBot" mnemonicParsing="false" onAction="#clickPlayerVsBot" prefHeight="40.0" prefWidth="200.0" text="Player vs AI" toggleGroup="$GameMode">
                            <HBox.margin>
                               <Insets left="30.0" right="30.0" />
                            </HBox.margin>
                         </ToggleButton>
-                        <ToggleButton fx:id="btnAiVsAi" mnemonicParsing="false" onAction="#clickAiVsAi" prefHeight="40.0" prefWidth="200.0" text="AI vs AI" toggleGroup="$GameMode">
+                        <ToggleButton fx:id="btnBotVsBot" mnemonicParsing="false" onAction="#clickBotVsBot" prefHeight="40.0" prefWidth="200.0" text="AI vs AI" toggleGroup="$GameMode">
                            <HBox.margin>
                               <Insets left="30.0" right="30.0" />
                            </HBox.margin>
