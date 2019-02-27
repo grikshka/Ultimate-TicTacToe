@@ -11,6 +11,7 @@ import ultimatetictactoe.bll.game.GameManager;
 import ultimatetictactoe.bll.game.GameState;
 import ultimatetictactoe.bll.game.IGameState;
 import ultimatetictactoe.bll.move.IMove;
+import ultimatetictactoe.bll.move.Move;
 
 /**
  *
@@ -57,6 +58,16 @@ public class GameModel {
     public List<IMove> getAvailableMoves()
     {
         return gameState.getField().getAvailableMoves();
+    }
+    
+    public int getCurrentPlayer()
+    {
+        return game.getCurrentPlayer();
+    }
+    
+    public boolean performPlayerMove(int moveXPosition, int moveYPosition)
+    {
+        return game.updateGame(new Move(moveXPosition, moveYPosition));
     }
     
 }
