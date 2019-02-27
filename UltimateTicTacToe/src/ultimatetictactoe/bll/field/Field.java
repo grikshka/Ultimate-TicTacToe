@@ -16,8 +16,8 @@ import ultimatetictactoe.bll.move.Move;
  */
 public class Field implements IField {
     
-    private String[][] board;
-    private String[][] macroboard;
+    private String[][] board = new String[9][9];
+    private String[][] macroboard = new String[3][3];
     
     public Field()
     {
