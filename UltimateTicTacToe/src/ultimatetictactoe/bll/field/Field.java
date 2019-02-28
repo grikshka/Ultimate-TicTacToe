@@ -72,12 +72,10 @@ public class Field implements IField {
     {
         List<IMove> availableMoves = new ArrayList();
         int startingXPosition = microboardXPosition*3;
-        int endingXPosition = startingXPosition + 2;
         int startingYPosition = microboardYPosition*3;
-        int endingYPosition = startingYPosition + 2;
-        for(int i = startingXPosition; i <= endingXPosition; i++)
+        for(int i = startingXPosition; i < startingXPosition+3; i++)
         {
-            for(int j = startingYPosition; j <= endingYPosition; j++)
+            for(int j = startingYPosition; j < startingYPosition+3; j++)
             {
                 if(board[i][j] == EMPTY_FIELD)
                 {
