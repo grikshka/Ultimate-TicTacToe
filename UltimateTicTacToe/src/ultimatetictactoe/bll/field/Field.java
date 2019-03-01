@@ -98,9 +98,9 @@ public class Field implements IField {
 
     @Override
     public boolean isFull() {
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < macroboard.length; i++)
         {
-            for(int j = 0; j < 3; j++)
+            for(int j = 0; j < macroboard[i].length; j++)
             {
                 if(macroboard[i][j] == EMPTY_FIELD || macroboard[i][j] == AVAILABLE_FIELD)
                 {
