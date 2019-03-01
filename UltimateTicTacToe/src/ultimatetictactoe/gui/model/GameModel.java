@@ -60,14 +60,30 @@ public class GameModel {
         return gameState.getField().getAvailableMoves();
     }
     
+    public boolean isMicroboardWon(int microboardXPosition, int microboardYPosition)
+    {
+        return game.isMicroboardWon(microboardXPosition, microboardYPosition);
+    }
+    
+    public boolean isGameOver()
+    {
+        return game.isGameOver();
+    }
+    
+    public boolean isDraw()
+    {
+        return false;
+    }
+        
+    
     public int getCurrentPlayer()
     {
         return game.getCurrentPlayer();
     }
     
-    public boolean performPlayerMove(int moveXPosition, int moveYPosition)
+    public boolean performPlayerMove(int fieldXPosition, int fieldYPosition)
     {
-        return game.updateGame(new Move(moveXPosition, moveYPosition));
+        return game.updateGame(new Move(fieldXPosition, fieldYPosition));
     }
     
 }
