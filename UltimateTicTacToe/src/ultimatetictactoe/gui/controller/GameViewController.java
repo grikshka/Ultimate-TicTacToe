@@ -10,10 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import ultimatetictactoe.bll.move.IMove;
@@ -54,7 +56,7 @@ public class GameViewController implements Initializable {
            Integer microboardYPosition = GridPane.getColumnIndex(microboard);
            int microboardX = (microboardXPosition == null) ? 0 : microboardXPosition;
            int microboardY = (microboardYPosition == null) ? 0 : microboardYPosition;
-           for(Node field : ((GridPane) microboard).getChildren())
+           for(Node field : ((GridPane) ((StackPane) microboard).getChildren().get(0)).getChildren())
            {
                Integer row = GridPane.getRowIndex(field);
                Integer col = GridPane.getColumnIndex(field);
@@ -83,32 +85,35 @@ public class GameViewController implements Initializable {
     @FXML
     private void clickOnField(ActionEvent event)
     {
+        int currentPlayer = model.getCurrentPlayer();
         int[] fieldPosition = getFieldPosition(event);
-        performPlayerMove(fieldPosition[0], fieldPosition[1]);
+        performPlayerMove(currentPlayer, fieldPosition[0], fieldPosition[1]);
+        checkIfMicroboardWon(currentPlayer, fieldPosition[0], fieldPosition[1]);
+        checkIfGameIsOver(currentPlayer);
         setAvailableFields();
     }
     
     private int[] getFieldPosition(ActionEvent event)
     {
-        int[] macroboardPosition = getMacroboardPosition(event);
-        int[] microboardPosition = getMicroboardPosition(event);
+        int[] macroboardPosition = getPositionOnMacroboard(event);
+        int[] microboardPosition = getPositionOnMicroboard(event);
         int fieldXPosition = macroboardPosition[0] * 3 + microboardPosition[0];
         int fieldYPosition = macroboardPosition[1] * 3 + microboardPosition[1];
         int[] fieldPosition = {fieldXPosition, fieldYPosition};
         return fieldPosition;
     }
     
-    private int[] getMacroboardPosition(ActionEvent event)
+    private int[] getPositionOnMacroboard(ActionEvent event)
     {
-        Integer macroboardXPosition = GridPane.getRowIndex(((Node) event.getSource()).getParent().getParent());
-        Integer macroboardYPosition = GridPane.getColumnIndex(((Node) event.getSource()).getParent().getParent());
-        macroboardXPosition = (macroboardXPosition == null) ? 0 : macroboardXPosition;
-        macroboardYPosition = (macroboardYPosition == null) ? 0 : macroboardYPosition;
-        int[] macroboardPosition = {macroboardXPosition, macroboardYPosition};
+        Integer microboardXPosition = GridPane.getRowIndex(((Node) event.getSource()).getParent().getParent().getParent());
+        Integer microboardYPosition = GridPane.getColumnIndex(((Node) event.getSource()).getParent().getParent().getParent());
+        microboardXPosition = (microboardXPosition == null) ? 0 : microboardXPosition;
+        microboardYPosition = (microboardYPosition == null) ? 0 : microboardYPosition;
+        int[] macroboardPosition = {microboardXPosition, microboardYPosition};
         return macroboardPosition;
     }
     
-    private int[] getMicroboardPosition(ActionEvent event)
+    private int[] getPositionOnMicroboard(ActionEvent event)
     {
         Integer microboardXPosition = GridPane.getRowIndex(((Node) event.getSource()).getParent());
         Integer microboardYPosition = GridPane.getColumnIndex(((Node) event.getSource()).getParent());
@@ -138,22 +143,67 @@ public class GameViewController implements Initializable {
         }
     }
     
-    private void performPlayerMove(int fieldXPosition, int fieldYPosition)
+    private void performPlayerMove(int currentPlayer, int fieldXPosition, int fieldYPosition)
     {
-        int currentPlayer = model.getCurrentPlayer();
         if(model.performPlayerMove(fieldXPosition, fieldYPosition))
         {
             Button field = board.get(fieldXPosition).get(fieldYPosition);
-            if(currentPlayer == 0)
-            {
-                field.setText("X");
-            }
-            else
-            {
-                field.setText("O");
-            }
-            field.setDisable(true);
+            field.setText(getPlayerMark(currentPlayer));
         }
+    }
+    
+    private void checkIfMicroboardWon(int currentPlayer, int fieldXPosition, int fieldYPosition)
+    {
+        if(model.isMicroboardWon(fieldXPosition/3, fieldYPosition/3))
+        {
+            GridPane microboard = (GridPane) board.get(fieldXPosition).get(fieldYPosition).getParent().getParent();
+            setMicroboardToWon(currentPlayer, microboard);
+        }
+    }
+    
+    private void checkIfGameIsOver(int currentPlayer)
+    {
+        if(model.isGameOver())
+        {
+            setGameOver(currentPlayer);
+        }
+        else if(model.isDraw())
+        {
+            setGameOver();
+        }
+    }
+    
+    private String getPlayerMark(int playerNumber)
+    {
+        if(playerNumber == 0)
+        {
+            return "X";
+        }
+        else
+        {
+            return "O";
+        }
+    }
+    
+    private void setMicroboardToWon(int microboardWinner, GridPane microboard)
+    {
+        StackPane microboardField = (StackPane) microboard.getParent();
+        microboard.setVisible(false);
+        microboardField.getChildren().add(new Label(getPlayerMark(microboardWinner)));
+    }
+    
+    private void setGameOver(int winner)
+    {
+        grdGameboard.setDisable(true);
+        StackPane gameboardField = (StackPane) grdGameboard.getParent();
+        gameboardField.getChildren().add(new Label(getPlayerMark(winner) + " won the game"));
+    }
+    
+    private void setGameOver()
+    {
+        grdGameboard.setDisable(true);
+        StackPane gameboardField = (StackPane) grdGameboard.getParent();
+        gameboardField.getChildren().add(new Label("Draw"));
     }
     
 }
