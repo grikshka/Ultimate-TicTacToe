@@ -72,7 +72,7 @@ public class GameModel {
     
     public boolean isDraw()
     {
-        return false;
+        return gameState.getField().isFull();
     }
         
     
