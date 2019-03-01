@@ -98,7 +98,17 @@ public class Field implements IField {
 
     @Override
     public boolean isFull() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 3; j++)
+            {
+                if(macroboard[i][j] == EMPTY_FIELD || macroboard[i][j] == AVAILABLE_FIELD)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
