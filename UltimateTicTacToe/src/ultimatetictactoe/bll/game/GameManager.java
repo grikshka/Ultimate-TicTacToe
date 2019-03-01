@@ -85,7 +85,6 @@ public class GameManager {
         
         //Update the currentState
         updateBoard(move);
-        checkMicroboardState(move);
         updateMacroboard(move);
         
         //Update currentPlayer
@@ -146,6 +145,12 @@ public class GameManager {
     
     private void updateMacroboard(IMove move)
     {
+       updateMicroboardState(move);
+       updateMicroboardsAvailability(move);
+    }
+    
+    private void updateMicroboardsAvailability(IMove move)
+    {
        int activeMicroboardX = move.getX()%3;
        int activeMicroboardY = move.getY()%3;
        String[][] macroboard = currentState.getField().getMacroboard();
@@ -158,15 +163,14 @@ public class GameManager {
        {
            setAllMicroboardsAvailable();
        }
-       
     }
     
     private void setAvailableMicroboard(int activeMicroboardX, int activeMicroboardY)
     {
         String[][] macroboard = currentState.getField().getMacroboard();
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < macroboard.length; i++)
            {
-               for(int j = 0; j < 3; j++)
+               for(int j = 0; j < macroboard[i].length; j++)
                {
                    if(i == activeMicroboardX && j == activeMicroboardY)
                    {
@@ -195,16 +199,16 @@ public class GameManager {
            }
     }
     
-    private void checkMicroboardState(IMove move)
+    private void updateMicroboardState(IMove move)
     {
         String[][] macroboard = currentState.getField().getMacroboard();
-        int startingX = (move.getX()/3)*3;
-        int startingY = (move.getY()/3)*3;
-        if(isWinOnMicroboard(move, startingX, startingY))
+        int startingXPosition = (move.getX()/3)*3;
+        int startingYPosition = (move.getY()/3)*3;
+        if(isWinOnMicroboard(move, startingXPosition, startingYPosition))
         {
             macroboard[move.getX()/3][move.getY()/3] = currentPlayer + "";
         }
-        else if(isDrawOnMicroboard(move, startingX, startingY))
+        else if(isDrawOnMicroboard(move, startingXPosition, startingYPosition))
         {
             macroboard[move.getX()/3][move.getY()/3] = "";
         }
@@ -229,31 +233,6 @@ public class GameManager {
             }
         }
         if(isDiagonalWin(board, startingX, startingY))
-        {
-            return true;
-        }
-        return false;
-    }
-    
-    public boolean isGameOver()
-    {
-        String[][] macroboard = currentState.getField().getMacroboard();
-        for(int i = 0; i < 3; i++)
-        {
-            if(isHorizontalWin(macroboard, i, 0))
-            {
-                return true;
-            }
-            for(int j = 0; j < 3; j++)
-            {
-                
-                if(isVerticalWin(macroboard, 0, j))
-                {
-                    return true;
-                }
-            }
-        }
-        if(isDiagonalWin(macroboard, 0, 0))
         {
             return true;
         }
@@ -319,6 +298,31 @@ public class GameManager {
         {
             return false;
         }
+    }
+    
+    public boolean isGameOver()
+    {
+        String[][] macroboard = currentState.getField().getMacroboard();
+        for(int i = 0; i < 3; i++)
+        {
+            if(isHorizontalWin(macroboard, i, 0))
+            {
+                return true;
+            }
+            for(int j = 0; j < 3; j++)
+            {
+                
+                if(isVerticalWin(macroboard, 0, j))
+                {
+                    return true;
+                }
+            }
+        }
+        if(isDiagonalWin(macroboard, 0, 0))
+        {
+            return true;
+        }
+        return false;
     }
     
     public int getCurrentPlayer()
