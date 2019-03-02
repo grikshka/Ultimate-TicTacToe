@@ -70,8 +70,20 @@ public class MainMenuViewController implements Initializable {
     
     private void initializeUserAndBotFields()
     {
+        initializeUserFields();
+        initializeBotFields();
+    }
+    
+    private void initializeUserFields()
+    {
         txtPlayer1 = createUserField();
         txtPlayer2 = createUserField();
+        txtPlayer1.setPromptText("Player 1");
+        txtPlayer2.setPromptText("Player 2");
+    }
+    
+    private void initializeBotFields()
+    {
         cmbBot1 = createBotField();
         cmbBot2 = createBotField();
     }
@@ -172,8 +184,8 @@ public class MainMenuViewController implements Initializable {
     {
         stage.setScene(scene);
         stage.setResizable(true);
-        stage.setMinWidth(1024);
-        stage.setMinHeight(800);
+        stage.setMinWidth(1280);
+        stage.setMinHeight(1024);
         stage.centerOnScreen();
     }
     
