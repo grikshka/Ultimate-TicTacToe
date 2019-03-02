@@ -22,6 +22,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import ultimatetictactoe.bll.bot.IBot;
 import ultimatetictactoe.gui.model.GameModel;
 
 /**
@@ -88,7 +89,7 @@ public class MainMenuViewController implements Initializable {
     {
         clearOptions();
         stcFirstOption.getChildren().add(txtPlayer1);
-        stcSecondOption.getChildren().add(cmbBot1);
+        stcSecondOption.getChildren().add(cmbBot2);
     }
 
     @FXML
@@ -125,29 +126,33 @@ public class MainMenuViewController implements Initializable {
         ComboBox cmb = new ComboBox();
         cmb.setMaxHeight(50);
         cmb.setMaxWidth(400);
+        cmb.setItems(model.getAllBots());
+        cmb.getSelectionModel().selectFirst();
         return cmb;
     }
 
     @FXML
     private void clickStart(ActionEvent event) throws IOException 
     {
-        setGameMode();
+        setNewGame();
         showGameView();
     }
     
-    private void setGameMode()
+    private void setNewGame()
     {
+        IBot firstBot = (IBot) cmbBot1.getSelectionModel().getSelectedItem();
+        IBot secondBot = (IBot) cmbBot2.getSelectionModel().getSelectedItem();
         if(btnPlayerVsPlayer.isSelected())
         {
             model.newPlayerVsPlayerGame();
         }
         else if(btnPlayerVsBot.isSelected())
         {
-            
+            model.newPlayerVsBotGame(secondBot);
         }
         else
         {
-            
+            model.newBotVsBotGame(firstBot, secondBot);
         }
     }
     
