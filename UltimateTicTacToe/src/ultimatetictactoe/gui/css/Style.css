@@ -1,0 +1,104 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2019-03-02, 12:49:18
+    Author     : Acer
+*/
+
+
+/*Toggle button css*/
+.toggle-button 
+{
+    -fx-background-color:#2f2f31;
+    -fx-text-fill:#b2b2b2;
+    -fx-border-color:#2f2f31;
+    -fx-border-width: 1;
+
+}
+.toggle-button:hover
+{
+    -fx-border-color:white;
+    -fx-border-width: 1;
+
+}
+    
+.toggle-button:selected
+{
+    -fx-background-color:#212122;
+    -fx-text-fill:white;   
+}
+
+/*Text field css*/
+
+.text-field
+{
+    -fx-font-family: "Montserrat Medium";
+    -fx-font-size: 16px;
+    -fx-background-color: white;
+}
+
+/*Combo box css*/
+
+.combo-box .column-header,
+.combo-box .column-header-background .filler{
+    -fx-background-color:#2f2f31; 
+}
+.combo-box{
+    -fx-background-color:#2f2f31;
+    -fx-text-fill:#b3b3b3; 
+}
+.combo-box .scroll-bar{
+    -fx-background-color:#2f2f31; 
+}
+.combo-box .scroll-bar:vertical{
+    -fx-background-color:#2f2f31; 
+}
+.combo-box .scroll-bar:horizontal{
+    -fx-background-color:transparent;
+}
+.combo-box .scroll-bar .thumb{
+    -fx-background-color:derive(black, 50%);
+}
+.combo-box.scroll-bar .thumb:hover{
+    -fx-background-color:derive(black, 70%);
+}
+.combo-box .increment-button:hover ,.text-area .decrement-button:hover{
+    -fx-background-color:transparent;
+}
+.combo-box .track{
+    -fx-background-color:transparent;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #2f2f31,#2f2f31;
+}
+.combo-box .list-cell{
+    -fx-background:#2f2f31;
+    -fx-background-color:#2f2f31;
+    -fx-border-color: transparent;
+    -fx-text-fill:#b3b3b3;
+}
+.combo-box .list-cell:hover {
+
+    -fx-text-fill: #4deeea;
+}
+
+/*Button style*/
+.button
+{
+    -fx-background-color: #2f2f31;
+    -fx-text-fill:white;   
+}
+.button:hover
+{
+    -fx-border-color: white;
+    -fx-border-width: 1;
+}
+.button:pressed
+{
+    -fx-background-color:#212122;
+    -fx-text-fill:white;   
+}
