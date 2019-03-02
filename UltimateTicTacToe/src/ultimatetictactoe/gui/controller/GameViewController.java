@@ -6,9 +6,11 @@
 package ultimatetictactoe.gui.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.animation.ParallelTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -16,10 +18,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import ultimatetictactoe.bll.move.IMove;
 import ultimatetictactoe.gui.model.GameModel;
+import ultimatetictactoe.gui.util.AnimationUtil;
 
 /**
  * FXML Controller class
@@ -33,6 +39,14 @@ public class GameViewController implements Initializable {
 
     private GameModel model;
     private HashMap<Integer, HashMap<Integer, Button>> board = new HashMap();
+    @FXML
+    private Rectangle imgCrossPartOne;
+    @FXML
+    private Rectangle imgCrossPartTwo;
+    @FXML
+    private Circle imgCirclePartOne;
+    @FXML
+    private Circle imgCirclePartTwo;
     
     public GameViewController()
     {
@@ -91,6 +105,7 @@ public class GameViewController implements Initializable {
         checkIfMicroboardWon(currentPlayer, fieldPosition[0], fieldPosition[1]);
         checkIfGameIsOver(currentPlayer);
         setAvailableFields();
+        switchPlayerPointer(currentPlayer);
     }
     
     private int[] getFieldPosition(ActionEvent event)
@@ -148,7 +163,9 @@ public class GameViewController implements Initializable {
         if(model.performPlayerMove(fieldXPosition, fieldYPosition))
         {
             Button field = board.get(fieldXPosition).get(fieldYPosition);
-            field.setText(getPlayerMark(currentPlayer));
+            field.setGraphic(getPlayerMark(currentPlayer));
+            ParallelTransition transition = AnimationUtil.createFieldAnimation((ImageView) field.getGraphic());
+            transition.play();
         }
     }
     
@@ -173,23 +190,46 @@ public class GameViewController implements Initializable {
         }
     }
     
-    private String getPlayerMark(int playerNumber)
+    private ImageView getPlayerMark(int playerNumber)
     {
         if(playerNumber == 0)
         {
-            return "X";
+            return new ImageView("/ultimatetictactoe/gui/images/PlayerOne.png");
         }
         else
         {
-            return "O";
+            return new ImageView("/ultimatetictactoe/gui/images/PlayerTwo.png");
         }
+    }
+    
+    private void switchPlayerPointer(int currentPlayer)
+    {
+        ParallelTransition transition = new ParallelTransition();
+        
+        List<Node> cross = new ArrayList();
+        cross.add(imgCrossPartOne);
+        cross.add(imgCrossPartTwo);
+        
+        if(currentPlayer == 0)
+        {
+            ParallelTransition showTransition = AnimationUtil.createShowCircleAnimation(imgCirclePartOne, imgCirclePartTwo);
+            ParallelTransition hideTransition = AnimationUtil.createHideCrossAnimation(cross);
+            transition.getChildren().addAll(showTransition, hideTransition);
+        }
+        else
+        {
+            ParallelTransition showTransition = AnimationUtil.createHideCircleAnimation(imgCirclePartOne, imgCirclePartTwo);
+            ParallelTransition hideTransition = AnimationUtil.createShowCrossAnimation(cross);
+            transition.getChildren().addAll(showTransition, hideTransition);
+        }
+        transition.play();
     }
     
     private void setMicroboardToWon(int microboardWinner, GridPane microboard)
     {
         StackPane microboardField = (StackPane) microboard.getParent();
         microboard.setVisible(false);
-        microboardField.getChildren().add(new Label(getPlayerMark(microboardWinner)));
+        microboardField.getChildren().add(getPlayerMark(microboardWinner));
     }
     
     private void setGameOver(int winner)
