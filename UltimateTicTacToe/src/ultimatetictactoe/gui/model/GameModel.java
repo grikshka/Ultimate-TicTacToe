@@ -6,7 +6,10 @@
 package ultimatetictactoe.gui.model;
 
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import ultimatetictactoe.bll.bot.IBot;
+import ultimatetictactoe.bll.bot.RandomBot;
 import ultimatetictactoe.bll.game.GameManager;
 import ultimatetictactoe.bll.game.GameState;
 import ultimatetictactoe.bll.game.IGameState;
@@ -80,10 +83,21 @@ public class GameModel {
     {
         return game.getCurrentPlayer();
     }
+   
+    public ObservableList<IBot> getAllBots()
+    {
+        ObservableList<IBot> allBots = FXCollections.observableArrayList();
+        allBots.add(new RandomBot());
+        return allBots;
+    }
     
     public boolean performPlayerMove(int fieldXPosition, int fieldYPosition)
     {
         return game.updateGame(new Move(fieldXPosition, fieldYPosition));
     }
     
+    public boolean performBotMove()
+    {
+        return game.updateGame();
+    }
 }
