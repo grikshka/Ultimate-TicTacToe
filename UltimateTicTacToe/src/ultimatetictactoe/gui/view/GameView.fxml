@@ -609,51 +609,51 @@
             <Insets top="250.0" />
          </padding>
       </StackPane>
-      <StackPane layoutX="220.0" layoutY="60.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="214.0" AnchorPane.topAnchor="40.0">
+      <StackPane layoutX="220.0" layoutY="60.0" maxWidth="850.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="40.0">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#2f2f31" height="150.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="600.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#2f2f31" height="150.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="800.0" />
             <Rectangle fx:id="imgCrossPartOne" arcHeight="5.0" arcWidth="5.0" fill="#ff2989" height="200.0" layoutX="292.0" layoutY="40.0" rotate="135.0" scaleX="0.22" scaleY="0.22" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="36.0">
                <StackPane.margin>
-                  <Insets right="357.0" top="-90.0" />
+                  <Insets right="453.0" top="-90.0" />
                </StackPane.margin>
             </Rectangle>
             <Rectangle fx:id="imgCrossPartTwo" arcHeight="5.0" arcWidth="5.0" fill="#ff2989" height="200.0" rotate="45.0" scaleX="0.22" scaleY="0.22" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="36.0">
                <StackPane.margin>
-                  <Insets right="357.0" top="-90.0" />
+                  <Insets right="453.0" top="-90.0" />
                </StackPane.margin>
             </Rectangle>
             <Label text="0 : 0" textFill="WHITE">
                <font>
-                  <Font name="Montserrat Medium" size="72.0" />
+                  <Font name="Montserrat Medium" size="46.0" />
                </font>
                <StackPane.margin>
                   <Insets top="20.0" />
                </StackPane.margin>
             </Label>
-            <Label layoutX="238.0" layoutY="66.0" text="Geg" textFill="WHITE">
+            <Label fx:id="lblPlayer1" layoutX="238.0" layoutY="66.0" text="Player 1" textFill="WHITE">
                <font>
-                  <Font name="Montserrat Medium" size="64.0" />
+                  <Font name="Montserrat Medium" size="36.0" />
                </font>
                <StackPane.margin>
-                  <Insets right="354.0" top="20.0" />
+                  <Insets right="450.0" top="20.0" />
                </StackPane.margin>
             </Label>
-            <Label layoutX="67.0" layoutY="71.0" text="Geg" textFill="WHITE" textOverrun="CLIP">
+            <Label fx:id="lblPlayer2" layoutX="67.0" layoutY="71.0" text="Player 2" textFill="WHITE" textOverrun="CLIP">
                <font>
-                  <Font name="Montserrat Medium" size="64.0" />
+                  <Font name="Montserrat Medium" size="36.0" />
                </font>
                <StackPane.margin>
-                  <Insets left="354.0" top="20.0" />
+                  <Insets left="450.0" top="20.0" />
                </StackPane.margin>
             </Label>
             <Circle fx:id="imgCirclePartOne" fill="#b2b2b2" radius="15.0" stroke="#b2b2b200" strokeType="INSIDE" strokeWidth="5.0">
                <StackPane.margin>
-                  <Insets bottom="90.0" left="357.0" />
+                  <Insets bottom="90.0" left="453.0" />
                </StackPane.margin>
             </Circle>
             <Circle fx:id="imgCirclePartTwo" fill="#2f2f30" radius="10.0" stroke="#b4b4b4" strokeType="INSIDE" strokeWidth="0.0">
                <StackPane.margin>
-                  <Insets bottom="90.0" left="357.0" />
+                  <Insets bottom="90.0" left="453.0" />
                </StackPane.margin>
             </Circle>
          </children>
