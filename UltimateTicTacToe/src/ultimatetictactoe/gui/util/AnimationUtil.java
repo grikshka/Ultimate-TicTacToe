@@ -28,24 +28,13 @@ public class AnimationUtil {
     public static String crossColor = "0xff2989";
     public static String circleColor = "0x4deee9";
 
-    public static ParallelTransition createHorizontalSequentialSlideWithFadingIn(int startingPosition, int endingPosition, List<Node> elements)
+    public static TranslateTransition createHorizontalSlide(int startingPosition, int endingPosition, Node element)
     {
-        int slideDuration = 200;
-        int fadeDuration = 150;
-        ParallelTransition transition = new ParallelTransition();
-        for(Node e: elements)
-        {            
-            TranslateTransition translate = new TranslateTransition(Duration.millis(slideDuration), e);
-            translate.setFromX(startingPosition);
-            translate.setToX(endingPosition);
-            FadeTransition fade = new FadeTransition(Duration.millis(fadeDuration), e);
-            fade.setFromValue(1);
-            fade.setToValue(1);
-            slideDuration += 80;
-            fadeDuration+=80;
-            transition.getChildren().addAll(translate,fade);
-        }
-        return transition;
+        int slideDuration = 150;     
+        TranslateTransition translate = new TranslateTransition(Duration.millis(slideDuration), element);
+        translate.setFromX(startingPosition);
+        translate.setToX(endingPosition);       
+        return translate;
     }
     
     public static ParallelTransition createShowCrossAnimation(List<Node> elements)
