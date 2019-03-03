@@ -124,17 +124,9 @@ public class GameManager {
     
     private Boolean verifyMoveLegality(IMove move)
     {
-        if(currentState.getField().isInActiveMicroboard(move.getX(), move.getY()))
-        {
-            for(IMove availableMove : currentState.getField().getAvailableMoves())
-            {
-                if(move.getX() == availableMove.getX() && move.getY() == availableMove.getY())
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        boolean isInActiveMicroboard = currentState.getField().isInActiveMicroboard(move.getX(), move.getY());
+        boolean isEmpty = currentState.getField().getBoard()[move.getX()][move.getY()] == IField.EMPTY_FIELD;
+        return isInActiveMicroboard && isEmpty;
     }
     
     private void updateBoard(IMove move)
@@ -168,17 +160,17 @@ public class GameManager {
     private void setAvailableMicroboard(int activeMicroboardX, int activeMicroboardY)
     {
         String[][] macroboard = currentState.getField().getMacroboard();
-        for(int i = 0; i < macroboard.length; i++)
+        for(int x = 0; x < macroboard.length; x++)
            {
-               for(int j = 0; j < macroboard[i].length; j++)
+               for(int y = 0; y < macroboard[x].length; y++)
                {
-                   if(i == activeMicroboardX && j == activeMicroboardY)
+                   if(x == activeMicroboardX && y == activeMicroboardY)
                    {
-                       macroboard[i][j] = IField.AVAILABLE_FIELD;
+                       macroboard[x][y] = IField.AVAILABLE_FIELD;
                    }
-                   else if(macroboard[i][j] == IField.AVAILABLE_FIELD)
+                   else if(macroboard[x][y] == IField.AVAILABLE_FIELD)
                    {
-                       macroboard[i][j] = IField.EMPTY_FIELD;
+                       macroboard[x][y] = IField.EMPTY_FIELD;
                    }
                }
            }
@@ -187,13 +179,13 @@ public class GameManager {
     private void setAllMicroboardsAvailable()
     {
         String[][] macroboard = currentState.getField().getMacroboard();
-        for(int i = 0; i < 3; i++)
+        for(int x = 0; x < 3; x++)
            {
-               for(int j = 0; j < 3; j++)
+               for(int y = 0; y < 3; y++)
                {
-                   if(macroboard[i][j] == IField.EMPTY_FIELD)
+                   if(macroboard[x][y] == IField.EMPTY_FIELD)
                    {
-                       macroboard[i][j] = IField.AVAILABLE_FIELD;
+                       macroboard[x][y] = IField.AVAILABLE_FIELD;
                    }
                }
            }
@@ -217,16 +209,16 @@ public class GameManager {
     private boolean isWinOnMicroboard(IMove move, int startingX, int startingY)
     {
         String[][] board = currentState.getField().getBoard();
-        for(int i = startingX; i < startingX+3; i++)
+        for(int x = startingX; x < startingX+3; x++)
         {
-            if(isHorizontalWin(board, i, startingY))
+            if(isHorizontalWin(board, x, startingY))
             {
                 return true;
             }
-            for(int j = startingY; j < startingY+3; j++)
+            for(int y = startingY; y < startingY+3; y++)
             {
                 
-                if(isVerticalWin(board, startingX, j))
+                if(isVerticalWin(board, startingX, y))
                 {
                     return true;
                 }
@@ -274,11 +266,11 @@ public class GameManager {
     {
         boolean isDraw = true;
         String[][] board = currentState.getField().getBoard();
-        for(int i = startingX; i < startingX+3; i++)
+        for(int x = startingX; x < startingX+3; x++)
         {
-            for(int j = startingY; j < startingY+3; j++)
+            for(int y = startingY; y < startingY+3; y++)
             {
-                if(board[i][j] == IField.EMPTY_FIELD)
+                if(board[x][y] == IField.EMPTY_FIELD)
                 {
                     isDraw = false;
                 }
@@ -303,9 +295,9 @@ public class GameManager {
     public boolean isGameOver()
     {
         String[][] macroboard = currentState.getField().getMacroboard();
-        for(int i = 0; i < 3; i++)
+        for(int x = 0; x < 3; x++)
         {
-            if(isHorizontalWin(macroboard, i, 0))
+            if(isHorizontalWin(macroboard, x, 0))
             {
                 return true;
             }
