@@ -8,6 +8,8 @@ package ultimatetictactoe.gui.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -25,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ultimatetictactoe.bll.bot.IBot;
 import ultimatetictactoe.gui.model.GameModel;
+import ultimatetictactoe.gui.util.AnimationUtil;
 
 /**
  * FXML Controller class
@@ -66,9 +69,20 @@ public class MainMenuViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) 
     {
         initializeUserAndBotFields();
-        btnPlayerVsPlayer.fire();
+        setToggleButtons();
     }    
     
+    private void setToggleButtons()
+    {
+        btnPlayerVsPlayer.fire();
+        GameMode.selectedToggleProperty().addListener((obsVal, oldVal, newVal) -> {
+            if (newVal == null)
+            {
+                oldVal.setSelected(true);
+            }
+        });
+    }
+       
     private void initializeUserAndBotFields()
     {
         initializeUserFields();
