@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.animation.ParallelTransition;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -47,6 +46,10 @@ public class GameViewController implements Initializable {
     private Circle imgCirclePartOne;
     @FXML
     private Circle imgCirclePartTwo;
+    @FXML
+    private Label lblPlayer1;
+    @FXML
+    private Label lblPlayer2;
     
     public GameViewController()
     {
@@ -74,10 +77,10 @@ public class GameViewController implements Initializable {
            {
                Integer row = GridPane.getRowIndex(field);
                Integer col = GridPane.getColumnIndex(field);
-               int r = (row == null) ? microboardX*3+0 : microboardX*3 + row;
-               int c = (col == null) ? microboardY*3+0 : microboardY*3 + col;
+               int fieldXPosition = (row == null) ? microboardX*3+0 : microboardX*3 + row;
+               int fieldYPosition = (col == null) ? microboardY*3+0 : microboardY*3 + col;
                Button button = ((Button) ((StackPane) field).getChildren().get(0));
-               addToBoard(r , c, button);
+               addToBoard(fieldXPosition , fieldYPosition, button);
            }
        }
     }
@@ -120,11 +123,11 @@ public class GameViewController implements Initializable {
     
     private int[] getPositionOnMacroboard(ActionEvent event)
     {
-        Integer microboardXPosition = GridPane.getRowIndex(((Node) event.getSource()).getParent().getParent().getParent());
-        Integer microboardYPosition = GridPane.getColumnIndex(((Node) event.getSource()).getParent().getParent().getParent());
-        microboardXPosition = (microboardXPosition == null) ? 0 : microboardXPosition;
-        microboardYPosition = (microboardYPosition == null) ? 0 : microboardYPosition;
-        int[] macroboardPosition = {microboardXPosition, microboardYPosition};
+        Integer macroboardXPosition = GridPane.getRowIndex(((Node) event.getSource()).getParent().getParent().getParent());
+        Integer macroboardYPosition = GridPane.getColumnIndex(((Node) event.getSource()).getParent().getParent().getParent());
+        macroboardXPosition = (macroboardXPosition == null) ? 0 : macroboardXPosition;
+        macroboardYPosition = (macroboardYPosition == null) ? 0 : macroboardYPosition;
+        int[] macroboardPosition = {macroboardXPosition, macroboardYPosition};
         return macroboardPosition;
     }
     
@@ -141,16 +144,16 @@ public class GameViewController implements Initializable {
     private void setAvailableFields()
     {
         List<IMove> availableMoves = model.getAvailableMoves();
-        for(int i = 0; i < 9; i++)
+        for(int x = 0; x < 9; x++)
         {
-            for(int j = 0; j < 9; j++)
+            for(int y = 0; y < 9; y++)
             {
-                board.get(i).get(j).setDisable(true);
+                board.get(x).get(y).setDisable(true);
                 for(IMove move : availableMoves)
                 {
-                    if(move.getX() == i && move.getY() == j)
+                    if(move.getX() == x && move.getY() == y)
                     {
-                        board.get(i).get(j).setDisable(false);
+                        board.get(x).get(y).setDisable(false);
                     }
 
                 }
@@ -244,6 +247,12 @@ public class GameViewController implements Initializable {
         grdGameboard.setDisable(true);
         StackPane gameboardField = (StackPane) grdGameboard.getParent();
         gameboardField.getChildren().add(new Label("Draw"));
+    }
+    
+    public void setPlayerLabels(String player1, String player2)
+    {
+        lblPlayer1.setText(player1);
+        lblPlayer2.setText(player2);
     }
     
 }
