@@ -108,7 +108,7 @@ public class AnimationUtil {
     public static ParallelTransition createFieldAnimation(ImageView field)
     {
         ParallelTransition transition = new ParallelTransition();
-        ScaleTransition scale = new ScaleTransition(Duration.millis(150), field);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(130), field);
         scale.setFromX(0.3);
         scale.setFromY(0.3);
         scale.setByX(0.5);
