@@ -61,7 +61,7 @@ public class Field implements IField {
         {
             for(int y = 0; y < macroboard[x].length; y++)
             {
-                if(macroboard[x][y] == AVAILABLE_FIELD)
+                if(macroboard[x][y].equals(AVAILABLE_FIELD))
                 {
                     availableMoves.addAll(getAvailableMovesFromMicroboard(x, y));
                 }
@@ -79,7 +79,7 @@ public class Field implements IField {
         {
             for(int y = startingYPosition; y < startingYPosition+3; y++)
             {
-                if(board[x][y] == EMPTY_FIELD)
+                if(board[x][y].equals(EMPTY_FIELD))
                 {
                     availableMoves.add(new Move(x, y));
                 }
@@ -99,7 +99,7 @@ public class Field implements IField {
         {
             for(int y = 0; y < board[x].length; y++)
             {
-                if(board[x][y] != EMPTY_FIELD)
+                if(!board[x][y].equals(EMPTY_FIELD))
                 {
                     return false;
                 }
@@ -114,7 +114,7 @@ public class Field implements IField {
         {
             for(int y = 0; y < macroboard[x].length; y++)
             {
-                if(macroboard[x][y] == EMPTY_FIELD || macroboard[x][y] == AVAILABLE_FIELD)
+                if(macroboard[x][y].equals(EMPTY_FIELD) || macroboard[x][y].equals(AVAILABLE_FIELD))
                 {
                     return false;
                 }
@@ -127,7 +127,7 @@ public class Field implements IField {
     public Boolean isInActiveMicroboard(int x, int y) {
         int macroboardXPosition = x/3;
         int macroboardYPosition = y/3;
-        return macroboard[macroboardXPosition][macroboardYPosition] == AVAILABLE_FIELD;
+        return macroboard[macroboardXPosition][macroboardYPosition].equals(AVAILABLE_FIELD);
     }
 
     @Override
