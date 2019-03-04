@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import ultimatetictactoe.bll.bot.IBot;
 import ultimatetictactoe.bll.bot.RandomBot;
 import ultimatetictactoe.bll.game.GameManager;
+import ultimatetictactoe.bll.game.GameManager.GameMode;
 import ultimatetictactoe.bll.game.GameState;
 import ultimatetictactoe.bll.game.IGameState;
 import ultimatetictactoe.bll.move.IMove;
@@ -40,6 +41,13 @@ public class GameModel {
         return instance;
     }
     
+    public ObservableList<IBot> getAllBots()
+    {
+        ObservableList<IBot> allBots = FXCollections.observableArrayList();
+        allBots.add(new RandomBot());
+        return allBots;
+    }
+    
     public void newPlayerVsPlayerGame()
     {
         gameState = new GameState();
@@ -58,39 +66,6 @@ public class GameModel {
         game = new GameManager(gameState, bot1, bot2);
     }
     
-    public List<IMove> getAvailableMoves()
-    {
-        return gameState.getField().getAvailableMoves();
-    }
-    
-    public boolean isMicroboardWon(int microboardXPosition, int microboardYPosition)
-    {
-        return game.isMicroboardWon(microboardXPosition, microboardYPosition);
-    }
-    
-    public boolean isGameOver()
-    {
-        return game.isGameOver();
-    }
-    
-    public boolean isDraw()
-    {
-        return gameState.getField().isFull();
-    }
-        
-    
-    public int getCurrentPlayer()
-    {
-        return game.getCurrentPlayer();
-    }
-   
-    public ObservableList<IBot> getAllBots()
-    {
-        ObservableList<IBot> allBots = FXCollections.observableArrayList();
-        allBots.add(new RandomBot());
-        return allBots;
-    }
-    
     public boolean performPlayerMove(int fieldXPosition, int fieldYPosition)
     {
         return game.updateGame(new Move(fieldXPosition, fieldYPosition));
@@ -99,5 +74,46 @@ public class GameModel {
     public boolean performBotMove()
     {
         return game.updateGame();
+    }
+    
+    public List<IMove> getAvailableMoves()
+    {
+        return gameState.getField().getAvailableMoves();
+    }
+    
+    public boolean isMicroboardWon(int microboardXPosition, int microboardYPosition)
+    {
+        String microboardValue = gameState.getField().getMacroboard()[microboardXPosition][microboardYPosition];
+        return microboardValue.equals(game.PLAYER_0_MARKER) || microboardValue.equals(game.PLAYER_1_MARKER);
+    }
+    
+    public boolean isMacroboardWon()
+    {
+        return game.hasWinner();
+    }
+    
+    public boolean isDraw()
+    {
+        return !game.hasWinner() && game.isGameOver();
+    }
+        
+    public boolean isGameOver()
+    {
+        return game.isGameOver();
+    }
+    
+    public int getCurrentPlayer()
+    {
+        return game.getCurrentPlayer();
+    }
+    
+    public GameMode getGameMode()
+    {
+        return game.getGameMode();
+    }
+    
+    public IMove getBotMove()
+    {
+        return game.getBotMove();
     }
 }
