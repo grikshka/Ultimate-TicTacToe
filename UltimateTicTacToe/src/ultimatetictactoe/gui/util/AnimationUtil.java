@@ -56,10 +56,10 @@ public class AnimationUtil {
         ParallelTransition transition = new ParallelTransition();
         for(Node e: elements)
         {
-        ScaleTransition scale = new ScaleTransition(Duration.millis(200), e);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(150), e);
         scale.setByX(setScale);
         scale.setByY(setScale);
-        FillTransition fill = new FillTransition(Duration.millis(200), (Shape) e, startingColor, endingColor);
+        FillTransition fill = new FillTransition(Duration.millis(150), (Shape) e, startingColor, endingColor);
         transition.getChildren().addAll(scale,fill);
         }
         return transition;
@@ -82,13 +82,13 @@ public class AnimationUtil {
     private static ParallelTransition createCircleAnimation(double setScale, Color startingColor, Color endingColor, Circle activeElement, Circle backgroundElement)
     {
         ParallelTransition transition = new ParallelTransition();
-        ScaleTransition scale = new ScaleTransition(Duration.millis(200), activeElement);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(150), activeElement);
         scale.setByX(setScale);
         scale.setByY(setScale);
-        ScaleTransition scale2 = new ScaleTransition(Duration.millis(200), backgroundElement);
+        ScaleTransition scale2 = new ScaleTransition(Duration.millis(150), backgroundElement);
         scale2.setByX(setScale);
         scale2.setByY(setScale);
-        FillTransition fill = new FillTransition(Duration.millis(200), (Shape) activeElement, startingColor, endingColor);
+        FillTransition fill = new FillTransition(Duration.millis(150), (Shape) activeElement, startingColor, endingColor);
         transition.getChildren().addAll(scale,fill,scale2);
         
         return transition;
