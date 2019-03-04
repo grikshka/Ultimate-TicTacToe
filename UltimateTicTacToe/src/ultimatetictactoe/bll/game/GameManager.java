@@ -27,7 +27,8 @@ public class GameManager {
     }
     
     private final IGameState currentState;
-    private int currentPlayer = 0; //player0 == 0 && player1 == 1
+    private int startingPlayer = 0;
+    private int currentPlayer = startingPlayer; //player0 == 0 && player1 == 1
     public final String PLAYER_0_MARKER = "0";
     public final String PLAYER_1_MARKER = "1";
     public final String DRAW_MARKER = "-";
@@ -75,6 +76,15 @@ public class GameManager {
         mode = GameMode.BotVsBot;
         this.bot = bot;
         this.bot2 = bot2;
+    }
+    
+    public void restartGame()
+    {
+        isGameOver = false;
+        hasWinner = false;
+        currentState.getField().clearBoard();
+        startingPlayer = (startingPlayer + 1) % 2;
+        currentPlayer = startingPlayer;
     }
     
     /**
