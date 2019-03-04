@@ -8,8 +8,6 @@ package ultimatetictactoe.gui.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.animation.ParallelTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -23,11 +21,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ultimatetictactoe.bll.bot.IBot;
 import ultimatetictactoe.gui.model.GameModel;
-import ultimatetictactoe.gui.util.AnimationUtil;
 
 /**
  * FXML Controller class
@@ -54,8 +50,6 @@ public class MainMenuViewController implements Initializable {
     private TextField txtPlayer2;
     private ComboBox cmbBot1;
     private ComboBox cmbBot2;
-    @FXML
-    private VBox vbxOptions;
     
     public MainMenuViewController()
     {
