@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.ParallelTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,6 +25,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import ultimatetictactoe.bll.game.GameManager.GameMode;
 import ultimatetictactoe.bll.move.IMove;
 import ultimatetictactoe.gui.model.GameModel;
 import ultimatetictactoe.gui.util.AnimationUtil;
@@ -32,12 +36,13 @@ import ultimatetictactoe.gui.util.AnimationUtil;
  * @author Acer
  */
 public class GameViewController implements Initializable {
+
+    private GameModel model;
+    private GameMode mode;
+    private HashMap<Integer, HashMap<Integer, Button>> board = new HashMap();
     
     @FXML
     private GridPane grdGameboard;
-
-    private GameModel model;
-    private HashMap<Integer, HashMap<Integer, Button>> board = new HashMap();
     @FXML
     private Rectangle imgCrossPartOne;
     @FXML
@@ -54,6 +59,7 @@ public class GameViewController implements Initializable {
     public GameViewController()
     {
         model = GameModel.getInstance();
+        mode = model.getGameMode();
     }
     
     /**
@@ -63,6 +69,7 @@ public class GameViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) 
     {
         initializeBoard();
+        checkForSimulationMode();
     }    
     
     private void initializeBoard()
@@ -99,16 +106,103 @@ public class GameViewController implements Initializable {
         }
     }
 
+    private void checkForSimulationMode()
+    {
+        if(mode == GameMode.BotVsBot)
+        {
+            performBotVsBotSimulation();
+        }
+    }
+    
+    private void performBotVsBotSimulation()
+    {
+        grdGameboard.setDisable(true);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() 
+            {
+                try 
+                {
+                    while(!model.isGameOver())
+                    {
+                        Thread.sleep(100);
+                        Platform.runLater(() -> performBotMove());
+                    }
+                } 
+                catch (InterruptedException ex) 
+                {
+                    Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        t.start();
+    }
+    
     @FXML
     private void clickOnField(ActionEvent event)
     {
+        if(performPlayerMove(event))
+        {
+            if(mode == GameMode.HumanVsBot)
+            {
+                imitateBotMove();          
+            }
+        }
+    }
+    
+    private void imitateBotMove()
+    {
+        grdGameboard.setDisable(true);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() 
+            {
+                try 
+                {
+                    Thread.sleep(1000);
+                    Platform.runLater(() -> {
+                        if(performBotMove())
+                        {
+                            grdGameboard.setDisable(false);
+                        }
+                    });
+                } 
+                catch (InterruptedException ex) 
+                {
+                    Logger.getLogger(GameViewController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        t.start();
+    }
+    
+    private boolean performBotMove()
+    {
         int currentPlayer = model.getCurrentPlayer();
-        int[] fieldPosition = getFieldPosition(event);
-        performPlayerMove(currentPlayer, fieldPosition[0], fieldPosition[1]);
-        checkIfMicroboardWon(currentPlayer, fieldPosition[0], fieldPosition[1]);
-        checkIfGameIsOver(currentPlayer);
-        setAvailableFields();
-        switchPlayerPointer(currentPlayer);
+        IMove botMove = null;
+        if(model.performBotMove())
+        {
+            botMove = model.getBotMove();
+            placePlayerMarker(currentPlayer, botMove.getX(), botMove.getY());          
+            updateGameboard(currentPlayer, botMove.getX(), botMove.getY());
+            return true;
+        }
+        return false;
+    }
+    
+    private void doMove(int currentPlayer, int fieldXPosition, int fieldYPosition)
+    {
+        
+    }
+    
+    private void updateGameboard(int currentPlayer, int fieldXPosition, int fieldYPosition)
+    {
+        checkIfMicroboardWon(currentPlayer, fieldXPosition, fieldYPosition);
+        if(!checkIfGameIsOver(currentPlayer))
+        {
+            switchPlayerPointer(currentPlayer);
+            setAvailableFields();
+        }
     }
     
     private int[] getFieldPosition(ActionEvent event)
@@ -161,15 +255,25 @@ public class GameViewController implements Initializable {
         }
     }
     
-    private void performPlayerMove(int currentPlayer, int fieldXPosition, int fieldYPosition)
+    private boolean performPlayerMove(ActionEvent event)
     {
-        if(model.performPlayerMove(fieldXPosition, fieldYPosition))
+        int currentPlayer = model.getCurrentPlayer();
+        int[] fieldPosition = getFieldPosition(event);
+        if(model.performPlayerMove(fieldPosition[0], fieldPosition[1]))
         {
-            Button field = board.get(fieldXPosition).get(fieldYPosition);
-            field.setGraphic(getPlayerMark(currentPlayer));
-            ParallelTransition transition = AnimationUtil.createFieldAnimation((ImageView) field.getGraphic());
-            transition.play();
+            placePlayerMarker(currentPlayer, fieldPosition[0], fieldPosition[1]);
+            updateGameboard(currentPlayer, fieldPosition[0], fieldPosition[1]);   
+            return true;
         }
+        return false;
+    }
+    
+    private void placePlayerMarker(int player, int fieldXPosition, int fieldYPosition)
+    {
+        Button field = board.get(fieldXPosition).get(fieldYPosition);
+        field.setGraphic(getPlayerMarker(player));
+        ParallelTransition transition = AnimationUtil.createFieldAnimation((ImageView) field.getGraphic());
+        transition.play();
     }
     
     private void checkIfMicroboardWon(int currentPlayer, int fieldXPosition, int fieldYPosition)
@@ -181,19 +285,25 @@ public class GameViewController implements Initializable {
         }
     }
     
-    private void checkIfGameIsOver(int currentPlayer)
+    private boolean checkIfGameIsOver(int currentPlayer)
     {
-        if(model.isGameOver())
+        if(model.isMacroboardWon())
         {
             setGameOver(currentPlayer);
+            return true;
         }
         else if(model.isDraw())
         {
-            setGameOver();
+            setDraw();
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
     
-    private ImageView getPlayerMark(int playerNumber)
+    private ImageView getPlayerMarker(int playerNumber)
     {
         if(playerNumber == 0)
         {
@@ -232,17 +342,17 @@ public class GameViewController implements Initializable {
     {
         StackPane microboardField = (StackPane) microboard.getParent();
         microboard.setVisible(false);
-        microboardField.getChildren().add(getPlayerMark(microboardWinner));
+        microboardField.getChildren().add(getPlayerMarker(microboardWinner));
     }
     
     private void setGameOver(int winner)
     {
         grdGameboard.setDisable(true);
         StackPane gameboardField = (StackPane) grdGameboard.getParent();
-        gameboardField.getChildren().add(new Label(getPlayerMark(winner) + " won the game"));
+        gameboardField.getChildren().add(new Label(getPlayerMarker(winner) + " won the game"));
     }
     
-    private void setGameOver()
+    private void setDraw()
     {
         grdGameboard.setDisable(true);
         StackPane gameboardField = (StackPane) grdGameboard.getParent();
