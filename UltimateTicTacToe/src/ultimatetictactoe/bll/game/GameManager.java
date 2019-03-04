@@ -19,6 +19,7 @@ public class GameManager {
     /**
      * Three different game modes.
      */
+    
     public enum GameMode{
         HumanVsHuman,
         HumanVsBot,
@@ -27,10 +28,16 @@ public class GameManager {
     
     private final IGameState currentState;
     private int currentPlayer = 0; //player0 == 0 && player1 == 1
+    public final String PLAYER_0_MARKER = "0";
+    public final String PLAYER_1_MARKER = "1";
+    public final String DRAW_MARKER = "-";
     private GameMode mode = GameMode.HumanVsHuman;
+    private boolean isGameOver = false;
+    private boolean hasWinner = false;
     private IBot bot = null;
     private IBot bot2 = null;
-
+    private IMove botMove;
+    
     /**
      * Set's the currentState so the game can begin.
      * Game expected to be played Human vs Human
@@ -77,8 +84,8 @@ public class GameManager {
      */
     public Boolean updateGame(IMove move)
     {
-        //Verify the new move
-        if(!verifyMoveLegality(move)) 
+        //Verify the new move and check if game is not finished
+        if(isGameOver || !verifyMoveLegality(move)) 
         { 
             return false; 
         }
@@ -87,8 +94,14 @@ public class GameManager {
         updateBoard(move);
         updateMacroboard(move);
         
-        //Update currentPlayer
-        currentPlayer = (currentPlayer + 1) % 2;
+        //Updates status
+        updateGameStatus();
+        
+        //Switch currentPlayer if game is not finished
+        if(!isGameOver)
+        {
+            currentPlayer = (currentPlayer + 1) % 2;
+        }
         
         return true;
     }
@@ -99,6 +112,11 @@ public class GameManager {
      */
     public Boolean updateGame()
     {
+        //Verify the new move and check if game is not finished
+        if(isGameOver)
+        {
+            return false;
+        }
         //Check game mode is set to one of the bot modes.
         assert(mode != GameMode.HumanVsHuman);
         
@@ -108,31 +126,40 @@ public class GameManager {
             //Check bot is not equal to null, and throw an exception if it is.
             assert(bot != null);
             
-            IMove botMove = bot.doMove(currentState);
-            
-            //Be aware that your bots might perform illegal moves.
-            return updateGame(botMove);
+            botMove = bot.doMove(currentState);
         }
         
-        //Check bot is not equal to null, and throw an exception if it is.
-        assert(bot != null);
-        assert(bot2 != null);
-        
-        //TODO: Implement a bot vs bot Update.
-        throw new UnsupportedOperationException("Not supported yet."); 
+        else if(mode == GameMode.BotVsBot)
+        {
+            //Check bot is not equal to null, and throw an exception if it is.
+            assert(bot != null);
+            assert(bot2 != null);
+            
+            if(currentPlayer == 0)
+            {
+                botMove = bot.doMove(currentState);
+            }
+            else
+            {
+                botMove = bot2.doMove(currentState);
+            }
+        }
+            
+        //Be aware that your bots might perform illegal moves.
+        return updateGame(botMove); 
     }
     
     private Boolean verifyMoveLegality(IMove move)
     {
         boolean isInActiveMicroboard = currentState.getField().isInActiveMicroboard(move.getX(), move.getY());
-        boolean isEmpty = currentState.getField().getBoard()[move.getX()][move.getY()] == IField.EMPTY_FIELD;
+        boolean isEmpty = currentState.getField().getBoard()[move.getX()][move.getY()].equals(IField.EMPTY_FIELD);
         return isInActiveMicroboard && isEmpty;
     }
     
     private void updateBoard(IMove move)
     {
        String[][] board = currentState.getField().getBoard();
-       board[move.getX()][move.getY()] = currentPlayer + "";
+       board[move.getX()][move.getY()] = getPlayerMarker(currentPlayer);
     }
     
     private void updateMacroboard(IMove move)
@@ -141,13 +168,121 @@ public class GameManager {
        updateMicroboardsAvailability(move);
     }
     
+    private void updateGameStatus()
+    {
+        if(isWinOnMacroboard())
+        {
+            isGameOver = true;
+            hasWinner = true;
+        }
+        else if(currentState.getField().isFull())
+        {
+            isGameOver = true;
+        }
+    }
+    
+    private void updateMicroboardState(IMove move)
+    {
+        String[][] macroboard = currentState.getField().getMacroboard();
+        int startingXPosition = (move.getX()/3)*3;
+        int startingYPosition = (move.getY()/3)*3;
+        if(isWinOnMicroboard(startingXPosition, startingYPosition))
+        {
+            macroboard[move.getX()/3][move.getY()/3] = getPlayerMarker(currentPlayer);
+        }
+        else if(isDrawOnMicroboard(startingXPosition, startingYPosition))
+        {
+            macroboard[move.getX()/3][move.getY()/3] = DRAW_MARKER;
+        }
+    }
+    
+    private boolean isWinOnMicroboard(int startingX, int startingY)
+    {
+        String[][] board = currentState.getField().getBoard();
+        return isWinOnBoard(board, startingX, startingY);
+    }
+    
+    private boolean isWinOnMacroboard()
+    {
+        String[][] macroboard = currentState.getField().getMacroboard();
+        return isWinOnBoard(macroboard, 0, 0);
+    }
+    
+    private boolean isWinOnBoard(String[][] board, int startingX, int startingY)
+    {
+        for(int x = startingX; x < startingX+3; x++)
+        {
+            if(isHorizontalWin(board, x, startingY))
+            {
+                return true;
+            }
+            for(int y = startingY; y < startingY+3; y++)
+            {
+                
+                if(isVerticalWin(board, startingX, y))
+                {
+                    return true;
+                }
+            }
+        }
+        return isDiagonalWin(board, startingX, startingY);
+    }
+    
+    private boolean isHorizontalWin(String[][] board, int startingX, int startingY)
+    {
+        return ((board[startingX][startingY].equals(PLAYER_0_MARKER) || board[startingX][startingY].equals(PLAYER_1_MARKER))
+                    && board[startingX][startingY].equals(board[startingX][startingY+1]) 
+                    && board[startingX][startingY+1].equals(board[startingX][startingY+2]));
+    }
+    
+    private boolean isVerticalWin(String[][] board, int startingX, int startingY)
+    {
+        return ((board[startingX][startingY].equals(PLAYER_0_MARKER) || board[startingX][startingY].equals(PLAYER_1_MARKER))
+                    && board[startingX][startingY].equals(board[startingX+1][startingY]) 
+                    && board[startingX+1][startingY].equals(board[startingX+2][startingY]));
+    }
+    
+    private boolean isDiagonalWin(String[][] board, int startingX, int startingY)
+    {
+        if((board[startingX][startingY].equals(PLAYER_0_MARKER) || board[startingX][startingY].equals(PLAYER_1_MARKER))
+                && board[startingX][startingY].equals(board[startingX+1][startingY+1])
+                && board[startingX+1][startingY+1].equals(board[startingX+2][startingY+2]))
+        {
+            return true;
+        }
+        else if((board[startingX][startingY+2].equals(PLAYER_0_MARKER) || board[startingX][startingY+2].equals(PLAYER_1_MARKER))
+                && board[startingX][startingY+2].equals(board[startingX+1][startingY+1])
+                && board[startingX+1][startingY+1].equals(board[startingX+2][startingY]))
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean isDrawOnMicroboard(int startingX, int startingY)
+    {
+        boolean isDraw = true;
+        String[][] board = currentState.getField().getBoard();
+        for(int x = startingX; x < startingX+3; x++)
+        {
+            for(int y = startingY; y < startingY+3; y++)
+            {
+                if(board[x][y].equals(IField.EMPTY_FIELD))
+                {
+                    isDraw = false;
+                }
+            }
+        }
+        return isDraw;
+    }
+    
     private void updateMicroboardsAvailability(IMove move)
     {
        int activeMicroboardX = move.getX()%3;
        int activeMicroboardY = move.getY()%3;
        String[][] macroboard = currentState.getField().getMacroboard();
-       if((macroboard[activeMicroboardX][activeMicroboardY] == IField.AVAILABLE_FIELD 
-               || macroboard[activeMicroboardX][activeMicroboardY] == IField.EMPTY_FIELD))
+       if(macroboard[activeMicroboardX][activeMicroboardY].equals(IField.AVAILABLE_FIELD) 
+               || macroboard[activeMicroboardX][activeMicroboardY].equals(IField.EMPTY_FIELD))
        {
            setAvailableMicroboard(activeMicroboardX, activeMicroboardY);
        }
@@ -168,7 +303,7 @@ public class GameManager {
                    {
                        macroboard[x][y] = IField.AVAILABLE_FIELD;
                    }
-                   else if(macroboard[x][y] == IField.AVAILABLE_FIELD)
+                   else if(macroboard[x][y].equals(IField.AVAILABLE_FIELD))
                    {
                        macroboard[x][y] = IField.EMPTY_FIELD;
                    }
@@ -183,7 +318,7 @@ public class GameManager {
            {
                for(int y = 0; y < 3; y++)
                {
-                   if(macroboard[x][y] == IField.EMPTY_FIELD)
+                   if(macroboard[x][y].equals(IField.EMPTY_FIELD))
                    {
                        macroboard[x][y] = IField.AVAILABLE_FIELD;
                    }
@@ -191,134 +326,40 @@ public class GameManager {
            }
     }
     
-    private void updateMicroboardState(IMove move)
+    private String getPlayerMarker(int player)
     {
-        String[][] macroboard = currentState.getField().getMacroboard();
-        int startingXPosition = (move.getX()/3)*3;
-        int startingYPosition = (move.getY()/3)*3;
-        if(isWinOnMicroboard(move, startingXPosition, startingYPosition))
+        if(player == 0)
         {
-            macroboard[move.getX()/3][move.getY()/3] = currentPlayer + "";
-        }
-        else if(isDrawOnMicroboard(move, startingXPosition, startingYPosition))
-        {
-            macroboard[move.getX()/3][move.getY()/3] = "";
-        }
-    }
-    
-    private boolean isWinOnMicroboard(IMove move, int startingX, int startingY)
-    {
-        String[][] board = currentState.getField().getBoard();
-        for(int x = startingX; x < startingX+3; x++)
-        {
-            if(isHorizontalWin(board, x, startingY))
-            {
-                return true;
-            }
-            for(int y = startingY; y < startingY+3; y++)
-            {
-                
-                if(isVerticalWin(board, startingX, y))
-                {
-                    return true;
-                }
-            }
-        }
-        if(isDiagonalWin(board, startingX, startingY))
-        {
-            return true;
-        }
-        return false;
-    }
-    
-    private boolean isHorizontalWin(String[][] board, int startingX, int startingY)
-    {
-        return ((board[startingX][startingY].equals(currentPlayer+"") || board[startingX][startingY].equals(((currentPlayer + 1) % 2)+""))
-                    && board[startingX][startingY].equals(board[startingX][startingY+1]) 
-                    && board[startingX][startingY+1].equals(board[startingX][startingY+2]));
-    }
-    
-    private boolean isVerticalWin(String[][] board, int startingX, int startingY)
-    {
-        return ((board[startingX][startingY].equals(currentPlayer+"") || board[startingX][startingY].equals(((currentPlayer + 1) % 2)+""))
-                    && board[startingX][startingY].equals(board[startingX+1][startingY]) 
-                    && board[startingX+1][startingY].equals(board[startingX+2][startingY]));
-    }
-    
-    private boolean isDiagonalWin(String[][] board, int startingX, int startingY)
-    {
-        if((board[startingX][startingY].equals(currentPlayer+"") || board[startingX][startingY].equals(((currentPlayer + 1) % 2)+""))
-                && board[startingX][startingY].equals(board[startingX+1][startingY+1])
-                && board[startingX+1][startingY+1].equals(board[startingX+2][startingY+2]))
-        {
-            return true;
-        }
-        else if((board[startingX][startingY+2].equals(currentPlayer+"") || board[startingX][startingY+2].equals(((currentPlayer + 1) % 2)+""))
-                && board[startingX][startingY+2].equals(board[startingX+1][startingY+1])
-                && board[startingX+1][startingY+1].equals(board[startingX+2][startingY]))
-        {
-            return true;
-        }
-        return false;
-    }
-    
-    private boolean isDrawOnMicroboard(IMove move, int startingX, int startingY)
-    {
-        boolean isDraw = true;
-        String[][] board = currentState.getField().getBoard();
-        for(int x = startingX; x < startingX+3; x++)
-        {
-            for(int y = startingY; y < startingY+3; y++)
-            {
-                if(board[x][y] == IField.EMPTY_FIELD)
-                {
-                    isDraw = false;
-                }
-            }
-        }
-        return isDraw;
-    }
-    
-    public boolean isMicroboardWon(int microboardXPosition, int microboardYPosition)
-    {
-        String microboardValue = currentState.getField().getMacroboard()[microboardXPosition][microboardYPosition];
-        if(microboardValue.equals(currentPlayer + "") || microboardValue.equals(((currentPlayer + 1) % 2) + ""))
-        {
-            return true;
+            return PLAYER_0_MARKER;
         }
         else
         {
-            return false;
+            return PLAYER_1_MARKER;
         }
-    }
-    
-    public boolean isGameOver()
-    {
-        String[][] macroboard = currentState.getField().getMacroboard();
-        for(int x = 0; x < 3; x++)
-        {
-            if(isHorizontalWin(macroboard, x, 0))
-            {
-                return true;
-            }
-            for(int j = 0; j < 3; j++)
-            {
-                
-                if(isVerticalWin(macroboard, 0, j))
-                {
-                    return true;
-                }
-            }
-        }
-        if(isDiagonalWin(macroboard, 0, 0))
-        {
-            return true;
-        }
-        return false;
     }
     
     public int getCurrentPlayer()
     {
         return currentPlayer;
+    }
+    
+    public GameMode getGameMode()
+    {
+        return mode;
+    }
+    
+    public IMove getBotMove()
+    {
+        return botMove;
+    }
+    
+    public boolean isGameOver()
+    {
+        return isGameOver;
+    }
+    
+    public boolean hasWinner()
+    {
+        return hasWinner;
     }
 }
