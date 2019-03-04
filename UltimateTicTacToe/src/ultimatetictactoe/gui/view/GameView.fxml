@@ -622,7 +622,7 @@
                   <Insets right="453.0" top="-90.0" />
                </StackPane.margin>
             </Rectangle>
-            <Label text="0 : 0" textFill="WHITE">
+            <Label text=":" textFill="WHITE">
                <font>
                   <Font name="Montserrat Medium" size="46.0" />
                </font>
@@ -656,6 +656,22 @@
                   <Insets bottom="90.0" left="453.0" />
                </StackPane.margin>
             </Circle>
+            <Label fx:id="lblPlayer1Score" text="0" textFill="WHITE">
+               <font>
+                  <Font name="Montserrat Medium" size="46.0" />
+               </font>
+               <StackPane.margin>
+                  <Insets right="100.0" top="20.0" />
+               </StackPane.margin>
+            </Label>
+            <Label fx:id="lblPlayer2Score" text="0" textFill="WHITE">
+               <font>
+                  <Font name="Montserrat Medium" size="46.0" />
+               </font>
+               <StackPane.margin>
+                  <Insets left="100.0" top="20.0" />
+               </StackPane.margin>
+            </Label>
          </children>
       </StackPane>
       <StackPane layoutY="942.0" prefHeight="82.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
