@@ -1,6 +1,7 @@
 package ultimatetictactoe.bll.game;
 
 import ultimatetictactoe.bll.bot.IBot;
+import ultimatetictactoe.bll.field.IField;
 import ultimatetictactoe.bll.move.IMove;
 
 /**
@@ -86,6 +87,7 @@ public class GameManager {
 
         //Update the currentState
         updateBoard(move);
+        checkMicroboardState(move);
         updateMacroboard(move);
 
         //Update currentPlayer
@@ -128,22 +130,171 @@ public class GameManager {
         }
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    private Boolean verifyMoveLegality(IMove move) {
-        //Test if the move is legal   
-        //NOTE: should also check whether the move is placed on an occupied spot.
-        System.out.println("Checking move validity against macroboard available field");
-        System.out.println("Not currently checking move validity actual board");
-        return currentState.getField().isInActiveMicroboard(move.getX(), move.getY());
+    
+    private Boolean verifyMoveLegality(IMove move)
+    {
+        if(currentState.getField().isInActiveMicroboard(move.getX(), move.getY()))
+        {
+            for(IMove availableMove : currentState.getField().getAvailableMoves())
+            {
+                if(move.getX() == availableMove.getX() && move.getY() == availableMove.getY())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
-
-    private void updateBoard(IMove move) {
-        //TODO: Update the board to the new state 
-        throw new UnsupportedOperationException("Not supported yet.");
+    
+    private void updateBoard(IMove move)
+    {
+       String[][] board = currentState.getField().getBoard();
+       board[move.getX()][move.getY()] = currentPlayer + "";
     }
-
-    private void updateMacroboard(IMove move) {
-        //TODO: Update the macroboard to the new state 
-        throw new UnsupportedOperationException("Not supported yet.");
+    
+    private void updateMacroboard(IMove move)
+    {
+       int activeMicroboardX = move.getX()%3;
+       int activeMicroboardY = move.getY()%3;
+       String[][] macroboard = currentState.getField().getMacroboard();
+       if((macroboard[activeMicroboardX][activeMicroboardY] == IField.AVAILABLE_FIELD 
+               || macroboard[activeMicroboardX][activeMicroboardY] == IField.EMPTY_FIELD))
+       {
+           setAvailableMicroboard(activeMicroboardX, activeMicroboardY);
+       }
+       else
+       {
+           setAllMicroboardsAvailable();
+       }
+       
+    }
+    
+    private void setAvailableMicroboard(int activeMicroboardX, int activeMicroboardY)
+    {
+        String[][] macroboard = currentState.getField().getMacroboard();
+        for(int i = 0; i < 3; i++)
+           {
+               for(int j = 0; j < 3; j++)
+               {
+                   if(i == activeMicroboardX && j == activeMicroboardY)
+                   {
+                       macroboard[i][j] = IField.AVAILABLE_FIELD;
+                   }
+                   else if(macroboard[i][j] == IField.AVAILABLE_FIELD)
+                   {
+                       macroboard[i][j] = IField.EMPTY_FIELD;
+                   }
+               }
+           }
+    }
+    
+    private void setAllMicroboardsAvailable()
+    {
+        String[][] macroboard = currentState.getField().getMacroboard();
+        for(int i = 0; i < 3; i++)
+           {
+               for(int j = 0; j < 3; j++)
+               {
+                   if(macroboard[i][j] == IField.EMPTY_FIELD)
+                   {
+                       macroboard[i][j] = IField.AVAILABLE_FIELD;
+                   }
+               }
+           }
+    }
+    
+    private void checkMicroboardState(IMove move)
+    {
+        String[][] macroboard = currentState.getField().getMacroboard();
+        int startingX = (move.getX()/3)*3;
+        int startingY = (move.getY()/3)*3;
+        if(isWinOnMicroboard(move, startingX, startingY))
+        {
+            macroboard[move.getX()/3][move.getY()/3] = currentPlayer + "";
+        }
+        else if(isDrawOnMicroboard(move, startingX, startingY))
+        {
+            macroboard[move.getX()/3][move.getY()/3] = "";
+        }
+    }
+    
+    private boolean isWinOnMicroboard(IMove move, int startingX, int startingY)
+    {
+        for(int i = startingX; i < startingX+3; i++)
+        {
+            if(isHorizontalWin(i, startingY))
+            {
+                return true;
+            }
+            for(int j = startingY; j < startingY+3; j++)
+            {
+                
+                if(isVerticalWin(startingX, j))
+                {
+                    return true;
+                }
+            }
+        }
+        if(isDiagonalWin(startingX, startingY))
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean isHorizontalWin(int startingX, int startingY)
+    {
+        String[][] board = currentState.getField().getBoard();
+        return board[startingX][startingY].equals(currentPlayer+"") 
+                    && board[startingX][startingY].equals(board[startingX][startingY+1]) 
+                    && board[startingX][startingY+1].equals(board[startingX][startingY+2]);
+    }
+    
+    private boolean isVerticalWin(int startingX, int startingY)
+    {
+        String[][] board = currentState.getField().getBoard();
+        return board[startingX][startingY].equals(currentPlayer+"") 
+                    && board[startingX][startingY].equals(board[startingX+1][startingY]) 
+                    && board[startingX+1][startingY].equals(board[startingX+2][startingY]);
+    }
+    
+    private boolean isDiagonalWin(int startingX, int startingY)
+    {
+        String[][] board = currentState.getField().getBoard();
+        if(board[startingX][startingY].equals(currentPlayer+"") 
+                && board[startingX][startingY].equals(board[startingX+1][startingY+1])
+                && board[startingX+1][startingY+1].equals(board[startingX+2][startingY+2]))
+        {
+            return true;
+        }
+        else if(board[startingX][startingY+2].equals(currentPlayer+"") 
+                && board[startingX][startingY+2].equals(board[startingX+1][startingY+1])
+                && board[startingX+1][startingY+1].equals(board[startingX+2][startingY]))
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean isDrawOnMicroboard(IMove move, int startingX, int startingY)
+    {
+        boolean isDraw = true;
+        String[][] board = currentState.getField().getBoard();
+        for(int i = startingX; i < startingX+3; i++)
+        {
+            for(int j = startingY; j < startingY+3; j++)
+            {
+                if(board[i][j] == IField.EMPTY_FIELD)
+                {
+                    isDraw = false;
+                }
+            }
+        }
+        return isDraw;
+    }
+    
+    public int getCurrentPlayer()
+    {
+        return currentPlayer;
     }
 }
