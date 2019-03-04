@@ -203,11 +203,11 @@ public class MainMenuViewController implements Initializable {
     
     private void setStageForGameView(Stage stage, Scene scene)
     {
-        stage.setScene(scene);
-        stage.setResizable(true);
         stage.setMinWidth(1280);
         stage.setMinHeight(1024);
+        stage.setScene(scene);
         stage.centerOnScreen();
+        
     }
     
     private void setPlayerLabelsOnGameView(GameViewController controller)
