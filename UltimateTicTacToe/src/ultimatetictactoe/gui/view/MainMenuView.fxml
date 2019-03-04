@@ -7,7 +7,6 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #404241;" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ultimatetictactoe.gui.controller.MainMenuViewController">
@@ -35,21 +34,17 @@
             <Font name="Montserrat Medium" size="18.0" />
          </font>
       </ToggleButton>
-      <VBox fx:id="vbxOptions" layoutY="234.0">
-         <children>
-            <StackPane fx:id="stcFirstOption" prefHeight="100.0" prefWidth="800.0" />
-            <StackPane fx:id="stcSecondOption" prefHeight="100.0" prefWidth="800.0" />
-         </children>
-      </VBox>
-      <JFXButton layoutX="325.0" layoutY="531.0" onAction="#clickExit" prefHeight="40.0" prefWidth="150.0" ripplerFill="WHITE" text="Exit" textFill="WHITE">
-         <font>
-            <Font name="Montserrat Medium" size="18.0" />
-         </font>
-      </JFXButton>
+      <StackPane fx:id="stcFirstOption" layoutX="-203.0" layoutY="177.0" prefHeight="100.0" prefWidth="800.0" AnchorPane.bottomAnchor="280.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="220.0" />
+      <StackPane fx:id="stcSecondOption" prefHeight="100.0" prefWidth="800.0" AnchorPane.bottomAnchor="180.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="320.0" />
       <Button layoutX="292.0" layoutY="443.0" mnemonicParsing="false" onAction="#clickStart" prefHeight="60.0" prefWidth="217.0" text="START" textFill="WHITE">
          <font>
             <Font name="Montserrat Medium" size="18.0" />
          </font>
       </Button>
+      <JFXButton layoutX="325.0" layoutY="531.0" onAction="#clickExit" prefHeight="40.0" prefWidth="150.0" ripplerFill="WHITE" text="Exit" textFill="WHITE">
+         <font>
+            <Font name="Montserrat Medium" size="18.0" />
+         </font>
+      </JFXButton>
    </children>
 </AnchorPane>
