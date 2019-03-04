@@ -87,6 +87,11 @@ public class GameModel {
         return microboardValue.equals(game.PLAYER_0_MARKER) || microboardValue.equals(game.PLAYER_1_MARKER);
     }
     
+    public void restartGame()
+    {
+        game.restartGame();
+    }
+    
     public boolean isMacroboardWon()
     {
         return game.hasWinner();
