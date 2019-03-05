@@ -6,7 +6,6 @@
 package ultimatetictactoe.gui.util;
 
 import java.util.List;
-import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
