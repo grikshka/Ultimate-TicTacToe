@@ -8,7 +8,10 @@ package ultimatetictactoe.gui.model;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import ultimatetictactoe.bll.bot.DrunkenBot;
 import ultimatetictactoe.bll.bot.IBot;
+import ultimatetictactoe.bll.bot.LocalPrioritisedListBot;
+import ultimatetictactoe.bll.bot.MemeBot;
 import ultimatetictactoe.bll.bot.RandomBot;
 import ultimatetictactoe.bll.game.GameManager;
 import ultimatetictactoe.bll.game.GameManager.GameMode;
@@ -45,6 +48,9 @@ public class GameModel {
     {
         ObservableList<IBot> allBots = FXCollections.observableArrayList();
         allBots.add(new RandomBot());
+        allBots.add(new MemeBot());
+        allBots.add(new LocalPrioritisedListBot());
+        allBots.add(new DrunkenBot());
         return allBots;
     }
     
