@@ -12,11 +12,9 @@ import ultimatetictactoe.bll.field.IField;
  *
  * @author Acer
  */
-public class GameState implements IGameState {
-
+public class GameState implements IGameState{
+    
     IField field = new Field();
-    private int moveNumber;
-    private int roundNumber;
 
     @Override
     public IField getField() {
@@ -25,28 +23,22 @@ public class GameState implements IGameState {
 
     @Override
     public int getMoveNumber() {
-        return moveNumber;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void setMoveNumber(int moveNumber) {
-        this.moveNumber = moveNumber;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int getRoundNumber() {
-        return roundNumber;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void setRoundNumber(int roundNumber) {
-        this.roundNumber = roundNumber;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    /*
-    //Rounds up the moves to the lowest. Each round is like moves / 2
-    private void setRoundNumber(int moveNumber){
-        roundNumber = (int) moveNumber/2;
-    }
-     */
-
+    
 }
