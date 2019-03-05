@@ -5,9 +5,11 @@
  */
 package ultimatetictactoe.gui.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -16,8 +18,11 @@ import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -25,6 +30,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import ultimatetictactoe.bll.game.GameManager.GameMode;
 import ultimatetictactoe.bll.move.IMove;
 import ultimatetictactoe.gui.model.GameModel;
@@ -40,6 +46,7 @@ public class GameViewController implements Initializable {
     private GameModel model;
     private GameMode mode;
     private HashMap<Integer, HashMap<Integer, Button>> board = new HashMap();
+    private int activePointer = 0;
     
     @FXML
     private GridPane grdGameboard;
@@ -55,6 +62,12 @@ public class GameViewController implements Initializable {
     private Label lblPlayer1;
     @FXML
     private Label lblPlayer2;
+    @FXML
+    private Button btnNewGame;
+    @FXML
+    private Label lblPlayer1Score;
+    @FXML
+    private Label lblPlayer2Score;
     
     public GameViewController()
     {
@@ -69,6 +82,7 @@ public class GameViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) 
     {
         initializeBoard();
+        setControlButtons();
         checkForSimulationMode();
     }    
     
@@ -106,6 +120,11 @@ public class GameViewController implements Initializable {
         }
     }
 
+    private void setControlButtons()
+    {
+        btnNewGame.setVisible(false);
+    }
+    
     private void checkForSimulationMode()
     {
         if(mode == GameMode.BotVsBot)
@@ -125,9 +144,10 @@ public class GameViewController implements Initializable {
                 {
                     while(!model.isGameOver())
                     {
-                        Thread.sleep(100);
+                        Thread.sleep(150);
                         Platform.runLater(() -> performBotMove());
                     }
+                    Platform.runLater(() -> btnNewGame.fire());
                 } 
                 catch (InterruptedException ex) 
                 {
@@ -183,26 +203,135 @@ public class GameViewController implements Initializable {
         if(model.performBotMove())
         {
             botMove = model.getBotMove();
-            placePlayerMarker(currentPlayer, botMove.getX(), botMove.getY());          
             updateGameboard(currentPlayer, botMove.getX(), botMove.getY());
             return true;
         }
         return false;
     }
     
-    private void doMove(int currentPlayer, int fieldXPosition, int fieldYPosition)
+    private boolean performPlayerMove(ActionEvent event)
     {
-        
+        int currentPlayer = model.getCurrentPlayer();
+        int[] fieldPosition = getFieldPosition(event);
+        if(model.performPlayerMove(fieldPosition[0], fieldPosition[1]))
+        {
+            updateGameboard(currentPlayer, fieldPosition[0], fieldPosition[1]);
+            return true;
+        }
+        return false;
     }
     
     private void updateGameboard(int currentPlayer, int fieldXPosition, int fieldYPosition)
     {
-        checkIfMicroboardWon(currentPlayer, fieldXPosition, fieldYPosition);
-        if(!checkIfGameIsOver(currentPlayer))
+        updateBoard(currentPlayer, fieldXPosition, fieldYPosition);          
+        updateMacroboard(currentPlayer, fieldXPosition, fieldYPosition);
+        updateGameState(currentPlayer, fieldXPosition, fieldYPosition);
+        if(!model.isGameOver())
         {
-            switchPlayerPointer(currentPlayer);
-            setAvailableFields();
+            setPlayerPointer((currentPlayer+1)%2);
         }
+    }
+    
+        private void updateBoard(int player, int fieldXPosition, int fieldYPosition)
+    {
+        Button field = board.get(fieldXPosition).get(fieldYPosition);
+        field.setGraphic(getPlayerMarker(player));
+        ParallelTransition transition = AnimationUtil.createFieldAnimation((ImageView) field.getGraphic());
+        transition.play();
+    }
+    
+    private void updateMacroboard(int currentPlayer, int fieldXPosition, int fieldYPosition)
+    {
+        updateMicroboardState(currentPlayer, fieldXPosition, fieldYPosition);
+        updateMicroboardsAvailability();
+    }
+    
+    private void updateMicroboardState(int currentPlayer, int fieldXPosition, int fieldYPosition)
+    {
+        if(model.isMicroboardWon(fieldXPosition/3, fieldYPosition/3))
+        {
+            GridPane microboard = (GridPane) board.get(fieldXPosition).get(fieldYPosition).getParent().getParent();
+            setMicroboardToWon(currentPlayer, microboard);
+        }
+    }
+    
+    private void updateMicroboardsAvailability()
+    {
+        List<IMove> availableMoves = model.getAvailableMoves();
+        for(int x = 0; x < 9; x++)
+        {
+            for(int y = 0; y < 9; y++)
+            {
+                board.get(x).get(y).setDisable(true);
+                for(IMove move : availableMoves)
+                {
+                    if(move.getX() == x && move.getY() == y)
+                    {
+                        board.get(x).get(y).setDisable(false);
+                    }
+
+                }
+            }
+        }
+    }
+    
+    private void updateGameState(int currentPlayer, int fieldXPosition, int fieldYPosition)
+    {
+        if(model.isMacroboardWon())
+        {
+            setGameOver(currentPlayer);
+        }
+        else if(model.isDraw())
+        {
+            setDraw();
+        }     
+    }
+    
+    private void setMicroboardToWon(int microboardWinner, GridPane microboard)
+    {
+        StackPane microboardField = (StackPane) microboard.getParent();
+        microboard.setVisible(false);
+        microboardField.getChildren().add(getPlayerMarker(microboardWinner));
+    }
+    
+    private void setGameOver(int winner)
+    {
+        grdGameboard.setDisable(true);
+        incrementPlayerScore(winner);
+        StackPane gameboardField = (StackPane) grdGameboard.getParent();
+        gameboardField.getChildren().add(new Label(getPlayerMarker(winner) + " won the game"));
+    }
+    
+    private void setDraw()
+    {
+        grdGameboard.setDisable(true);
+        StackPane gameboardField = (StackPane) grdGameboard.getParent();
+        gameboardField.getChildren().add(new Label("Draw"));
+    }
+    
+    private void setPlayerPointer(int currentPlayer)
+    {
+        ParallelTransition transition = new ParallelTransition();
+        
+        List<Node> cross = new ArrayList();
+        cross.add(imgCrossPartOne);
+        cross.add(imgCrossPartTwo);
+        
+        if(currentPlayer == 0 && activePointer==1)
+        {
+            ParallelTransition showTransition = AnimationUtil.createShowCrossAnimation(cross);
+            ParallelTransition hideTransition = AnimationUtil.createHideCircleAnimation(imgCirclePartOne, imgCirclePartTwo);
+            transition.getChildren().addAll(showTransition, hideTransition);
+            activePointer = 0;
+        }
+        else if(currentPlayer == 1 && activePointer==0)
+        {
+            ParallelTransition hideTransition = AnimationUtil.createHideCrossAnimation(cross);
+            ParallelTransition showTransition = AnimationUtil.createShowCircleAnimation(imgCirclePartOne, imgCirclePartTwo);
+            transition.getChildren().addAll(showTransition, hideTransition);
+            activePointer = 1;
+        }
+        transition.play();
     }
     
     private int[] getFieldPosition(ActionEvent event)
@@ -235,74 +364,6 @@ public class GameViewController implements Initializable {
         return microboardPosition;
     }
     
-    private void setAvailableFields()
-    {
-        List<IMove> availableMoves = model.getAvailableMoves();
-        for(int x = 0; x < 9; x++)
-        {
-            for(int y = 0; y < 9; y++)
-            {
-                board.get(x).get(y).setDisable(true);
-                for(IMove move : availableMoves)
-                {
-                    if(move.getX() == x && move.getY() == y)
-                    {
-                        board.get(x).get(y).setDisable(false);
-                    }
-
-                }
-            }
-        }
-    }
-    
-    private boolean performPlayerMove(ActionEvent event)
-    {
-        int currentPlayer = model.getCurrentPlayer();
-        int[] fieldPosition = getFieldPosition(event);
-        if(model.performPlayerMove(fieldPosition[0], fieldPosition[1]))
-        {
-            placePlayerMarker(currentPlayer, fieldPosition[0], fieldPosition[1]);
-            updateGameboard(currentPlayer, fieldPosition[0], fieldPosition[1]);   
-            return true;
-        }
-        return false;
-    }
-    
-    private void placePlayerMarker(int player, int fieldXPosition, int fieldYPosition)
-    {
-        Button field = board.get(fieldXPosition).get(fieldYPosition);
-        field.setGraphic(getPlayerMarker(player));
-        ParallelTransition transition = AnimationUtil.createFieldAnimation((ImageView) field.getGraphic());
-        transition.play();
-    }
-    
-    private void checkIfMicroboardWon(int currentPlayer, int fieldXPosition, int fieldYPosition)
-    {
-        if(model.isMicroboardWon(fieldXPosition/3, fieldYPosition/3))
-        {
-            GridPane microboard = (GridPane) board.get(fieldXPosition).get(fieldYPosition).getParent().getParent();
-            setMicroboardToWon(currentPlayer, microboard);
-        }
-    }
-    
-    private boolean checkIfGameIsOver(int currentPlayer)
-    {
-        if(model.isMacroboardWon())
-        {
-            setGameOver(currentPlayer);
-            return true;
-        }
-        else if(model.isDraw())
-        {
-            setDraw();
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    
     private ImageView getPlayerMarker(int playerNumber)
     {
         if(playerNumber == 0)
@@ -315,54 +376,86 @@ public class GameViewController implements Initializable {
         }
     }
     
-    private void switchPlayerPointer(int currentPlayer)
+    private void incrementPlayerScore(int playerNumber)
     {
-        ParallelTransition transition = new ParallelTransition();
-        
-        List<Node> cross = new ArrayList();
-        cross.add(imgCrossPartOne);
-        cross.add(imgCrossPartTwo);
-        
-        if(currentPlayer == 0)
+        if(playerNumber == 0)
         {
-            ParallelTransition showTransition = AnimationUtil.createShowCircleAnimation(imgCirclePartOne, imgCirclePartTwo);
-            ParallelTransition hideTransition = AnimationUtil.createHideCrossAnimation(cross);
-            transition.getChildren().addAll(showTransition, hideTransition);
+            int updatedScore = Integer.parseInt(lblPlayer1Score.getText())+1;
+            lblPlayer1Score.setText(updatedScore + "");
         }
         else
         {
-            ParallelTransition showTransition = AnimationUtil.createHideCircleAnimation(imgCirclePartOne, imgCirclePartTwo);
-            ParallelTransition hideTransition = AnimationUtil.createShowCrossAnimation(cross);
-            transition.getChildren().addAll(showTransition, hideTransition);
+            int updatedScore = Integer.parseInt(lblPlayer2Score.getText())+1;
+            lblPlayer2Score.setText(updatedScore + "");
         }
-        transition.play();
-    }
-    
-    private void setMicroboardToWon(int microboardWinner, GridPane microboard)
-    {
-        StackPane microboardField = (StackPane) microboard.getParent();
-        microboard.setVisible(false);
-        microboardField.getChildren().add(getPlayerMarker(microboardWinner));
-    }
-    
-    private void setGameOver(int winner)
-    {
-        grdGameboard.setDisable(true);
-        StackPane gameboardField = (StackPane) grdGameboard.getParent();
-        gameboardField.getChildren().add(new Label(getPlayerMarker(winner) + " won the game"));
-    }
-    
-    private void setDraw()
-    {
-        grdGameboard.setDisable(true);
-        StackPane gameboardField = (StackPane) grdGameboard.getParent();
-        gameboardField.getChildren().add(new Label("Draw"));
     }
     
     public void setPlayerLabels(String player1, String player2)
     {
         lblPlayer1.setText(player1);
         lblPlayer2.setText(player2);
+    }
+
+    @FXML
+    private void clickNewGame(ActionEvent event) 
+    {
+        model.restartGame();
+        
+        //removes label with winner from the view
+        ((StackPane)grdGameboard.getParent()).getChildren().removeIf(node -> !(node instanceof GridPane));
+        
+        clearGameboard();
+        setPlayerPointer(model.getCurrentPlayer());
+        checkForSimulationMode();
+    }
+    
+    private void clearGameboard()
+    {
+        for(Node microboardField : grdGameboard.getChildren())
+        {
+            Iterator<Node> iterator = ((StackPane)microboardField).getChildren().iterator();
+            while(iterator.hasNext())
+            {
+                Node node = iterator.next();
+                if(node instanceof GridPane)
+                {
+                    GridPane microboard = (GridPane) node;
+                    for(Node buttonField : microboard.getChildren())
+                    {
+                        Button field = (Button)((StackPane)buttonField).getChildren().get(0);
+                        field.setDisable(false);
+                        field.setGraphic(null);
+                    }
+                    microboard.setVisible(true);
+                }
+                else
+                {
+                    iterator.remove();
+                }
+            }
+        }
+        grdGameboard.setDisable(false);
+    }
+
+    @FXML
+    private void clickMainMenu(ActionEvent event) throws IOException 
+    {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ultimatetictactoe/gui/view/MainMenuView.fxml"));
+        Parent root = fxmlLoader.load();   
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.hide();
+        setMainMenuView(stage, scene);
+        stage.show();
+    }
+    
+    private void setMainMenuView(Stage stage, Scene scene)
+    {
+        stage.setMaximized(false);
+        stage.setMinWidth(800);
+        stage.setMinHeight(630);
+        stage.setScene(scene);
+        stage.centerOnScreen();
     }
     
 }
