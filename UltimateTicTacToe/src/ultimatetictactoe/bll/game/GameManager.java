@@ -180,6 +180,8 @@ public class GameManager {
     
     private void updateGameStatus()
     {
+        currentState.setMoveNumber(currentState.getMoveNumber()+1);
+        if(currentState.getMoveNumber() % 2 == 0) { currentState.setRoundNumber(currentState.getRoundNumber() + 1); }
         if(isWinOnMacroboard())
         {
             isGameOver = true;
