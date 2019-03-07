@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ultimatetictactoe.bll.bot.DrunkenBot;
+import ultimatetictactoe.bll.bot.GregBot;
 import ultimatetictactoe.bll.bot.IBot;
 import ultimatetictactoe.bll.bot.LocalPrioritisedListBot;
 import ultimatetictactoe.bll.bot.MemeBot;
@@ -51,6 +52,7 @@ public class GameModel {
         allBots.add(new MemeBot());
         allBots.add(new LocalPrioritisedListBot());
         allBots.add(new DrunkenBot());
+        allBots.add(new GregBot());
         return allBots;
     }
     
