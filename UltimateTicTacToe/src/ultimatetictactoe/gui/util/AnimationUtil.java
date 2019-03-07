@@ -6,6 +6,7 @@
 package ultimatetictactoe.gui.util;
 
 import java.util.List;
+import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -35,6 +36,20 @@ public class AnimationUtil {
         translate.setToX(endingPosition);       
         return translate;
     }
+    
+    public static ParallelTransition createFadingInAnimation(List<Node> elements)
+    {
+        int fadeDuration = 150;
+        ParallelTransition transition = new ParallelTransition();
+        for(Node e: elements)
+        {
+            FadeTransition fade = new FadeTransition(Duration.millis(fadeDuration), e);
+            fade.setFromValue(0);
+            fade.setToValue(1);
+            transition.getChildren().addAll(fade);
+        }
+        return transition;
+    } 
     
     public static ParallelTransition createShowCrossAnimation(List<Node> elements)
     {
@@ -92,6 +107,31 @@ public class AnimationUtil {
         
         return transition;
     }
+    
+    public static ParallelTransition createGameOverAnimation(Shape rectangle)
+    {
+        ParallelTransition transition = new ParallelTransition();
+        ScaleTransition scale = new ScaleTransition(Duration.millis(200), rectangle);
+        scale.setFromX(0.3);
+        scale.setByX(15);
+        scale.play();
+        transition.getChildren().addAll(scale);
+        return transition;
+    }   
+    
+    public static ParallelTransition createMicroboardAnimation(ImageView field)
+    {
+        ParallelTransition transition = new ParallelTransition();
+        ScaleTransition scale = new ScaleTransition(Duration.millis(200), field);
+        scale.setFromX(0.3);
+        scale.setFromY(0.3);
+        scale.setByX(1.5);
+        scale.setByY(1.5);
+        transition.getChildren().addAll(scale);
+        return transition;
+    }
+
+ 
     
     public static ParallelTransition createFieldAnimation(ImageView field)
     {
