@@ -64,7 +64,6 @@ public class GregBot implements IBot{
             int rolloutResult = performRollout(nodeToExplore);
             backPropagation(nodeToExplore, rolloutResult);
         }
-        
         Node winnerNode = rootNode.getChildWithMaxScore();
         return getMove(rootNode, winnerNode);
     }
@@ -124,11 +123,11 @@ public class GregBot implements IBot{
         {
             randomPlay(tempState);
         }
-        if(isWin(tempState) &&  (tempState.getMoveNumber())%2 == opponent)
+        if(isWin(tempState) &&  (tempState.getMoveNumber()+1)%2 == opponent)
         {
             return 0;
         }
-        else if(isWin(tempState) && (tempState.getMoveNumber())%2 == (opponent+1)%2)
+        else if(isWin(tempState) && (tempState.getMoveNumber()+1)%2 == (opponent+1)%2)
         {
             return 50;
         }
@@ -303,8 +302,8 @@ public class GregBot implements IBot{
         String[][] board = state.getField().getBoard();
         board[moveX][moveY] = state.getMoveNumber()%2 + "";
         state.getField().setBoard(board);
-        state.setMoveNumber(state.getMoveNumber()+1);
         updateMacroboard(state, moveX, moveY);
+        state.setMoveNumber(state.getMoveNumber()+1);
     }
     
     private void updateMacroboard(IGameState state, int moveX, int moveY)
