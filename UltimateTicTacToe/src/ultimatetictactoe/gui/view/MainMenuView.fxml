@@ -6,24 +6,32 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #404241;" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ultimatetictactoe.gui.controller.MainMenuViewController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #404241;" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ultimatetictactoe.gui.controller.MainMenuViewController">
    <children>
       <StackPane layoutY="-11.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <StackPane>
                <children>
-                  <Label prefHeight="176.0" prefWidth="375.0" text="Ultimate Tic-Tac-Toe" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <JFXButton focusTraversable="false" onAction="#clickExit" prefHeight="40.0" prefWidth="150.0" ripplerFill="WHITE" style="-fx-background-color: transparent;" text="Exit" textFill="WHITE">
                      <font>
-                        <Font name="Montserrat Medium" size="58.0" />
+                        <Font name="Montserrat Medium" size="18.0" />
                      </font>
                      <StackPane.margin>
-                        <Insets bottom="420.0" />
+                        <Insets top="530.0" />
                      </StackPane.margin>
-                  </Label>
+                  </JFXButton>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1a1a1" height="6.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="203.0">
+                     <StackPane.margin>
+                        <Insets bottom="360.0" />
+                     </StackPane.margin>
+                  </Rectangle>
                   <ToggleButton fx:id="btnPlayerVsPlayer" mnemonicParsing="false" onAction="#clickPlayerVsPlayer" prefHeight="40.0" prefWidth="200.0" text="Player vs Player" textFill="WHITE">
                      <toggleGroup>
                         <ToggleGroup fx:id="GameMode" />
@@ -32,7 +40,7 @@
                         <Font name="Montserrat Medium" size="18.0" />
                      </font>
                      <StackPane.margin>
-                        <Insets bottom="200.0" right="410.0" />
+                        <Insets bottom="300.0" right="450.0" />
                      </StackPane.margin>
                   </ToggleButton>
                   <ToggleButton fx:id="btnPlayerVsBot" mnemonicParsing="false" onAction="#clickPlayerVsBot" prefHeight="40.0" prefWidth="200.0" text="Player vs AI" textFill="WHITE" toggleGroup="$GameMode">
@@ -40,7 +48,7 @@
                         <Font name="Montserrat Medium" size="18.0" />
                      </font>
                      <StackPane.margin>
-                        <Insets bottom="200.0" />
+                        <Insets bottom="300.0" />
                      </StackPane.margin>
                   </ToggleButton>
                   <ToggleButton fx:id="btnBotVsBot" mnemonicParsing="false" onAction="#clickBotVsBot" prefHeight="40.0" prefWidth="200.0" text="AI vs AI" textFill="WHITE" toggleGroup="$GameMode">
@@ -48,7 +56,7 @@
                         <Font name="Montserrat Medium" size="18.0" />
                      </font>
                      <StackPane.margin>
-                        <Insets bottom="200.0" right="-410.0" />
+                        <Insets bottom="300.0" right="-450.0" />
                      </StackPane.margin>
                   </ToggleButton>
                   <StackPane fx:id="stcFirstOption" maxHeight="100.0" maxWidth="800.0" prefHeight="100.0" prefWidth="800.0">
@@ -69,16 +77,52 @@
                         <Insets top="360.0" />
                      </StackPane.margin>
                   </Button>
-                  <JFXButton onAction="#clickExit" prefHeight="40.0" prefWidth="150.0" ripplerFill="WHITE" text="Exit" textFill="WHITE">
+                  <Label prefHeight="108.0" prefWidth="233.0" text="Ultimate Tic-Tac-Toe" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <font>
-                        <Font name="Montserrat Medium" size="18.0" />
+                        <Font name="Montserrat Medium" size="36.0" />
                      </font>
                      <StackPane.margin>
-                        <Insets top="530.0" />
+                        <Insets bottom="500.0" />
                      </StackPane.margin>
-                  </JFXButton>
+                  </Label>
+                  <ImageView fitHeight="42.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/PlayerOneLogo.PNG" />
+                     </image>
+                     <StackPane.margin>
+                        <Insets bottom="500.0" right="275.0" />
+                     </StackPane.margin>
+                  </ImageView>
+                  <ImageView fitHeight="42.0" fitWidth="42.0" layoutX="389.0" layoutY="289.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/PlayerTwoLogo.PNG" />
+                     </image>
+                     <StackPane.margin>
+                        <Insets bottom="500.0" left="270.0" />
+                     </StackPane.margin>
+                  </ImageView>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1a1a1" height="6.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="203.0">
+                     <StackPane.margin>
+                        <Insets bottom="360.0" right="-450.0" />
+                     </StackPane.margin>
+                  </Rectangle>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="6.0" layoutX="309.0" layoutY="127.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="203.0">
+                     <StackPane.margin>
+                        <Insets bottom="360.0" right="450.0" />
+                     </StackPane.margin>
+                  </Rectangle>
                </children>
             </StackPane>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#737373" height="2.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="755.0">
+               <StackPane.margin>
+                  <Insets bottom="400.0" />
+               </StackPane.margin>
+            </Rectangle>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#737373" height="2.0" layoutX="33.0" layoutY="109.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="755.0">
+               <StackPane.margin>
+                  <Insets bottom="-450.0" />
+               </StackPane.margin>
+            </Rectangle>
          </children>
       </StackPane>
    </children>

@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -601,15 +603,56 @@
                   </GridPane>
                </children>
                <StackPane.margin>
-                  <Insets top="-100.0" />
+                  <Insets bottom="10.0" top="-100.0" />
                </StackPane.margin>
+            </StackPane>
+            <StackPane fx:id="stcGameOver" mouseTransparent="true" prefHeight="150.0" prefWidth="200.0" visible="false">
+               <children>
+                  <Rectangle fx:id="rctGameOver" arcHeight="5.0" arcWidth="5.0" fill="#2d2d2ee7" height="150.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="42.0">
+                     <StackPane.margin>
+                        <Insets bottom="100.0" />
+                     </StackPane.margin>
+                  </Rectangle>
+                  <Label fx:id="lblWinner" text="Player name" textFill="WHITE">
+                     <font>
+                        <Font name="Montserrat Regular" size="36.0" />
+                     </font>
+                     <StackPane.margin>
+                        <Insets bottom="95.0" />
+                     </StackPane.margin>
+                  </Label>
+                  <Label fx:id="lblDraw" text="Draw" textFill="WHITE">
+                     <font>
+                        <Font name="Montserrat Regular" size="36.0" />
+                     </font>
+                     <StackPane.margin>
+                        <Insets bottom="105.0" />
+                     </StackPane.margin>
+                  </Label>
+                  <ImageView fx:id="imgWinner" fitHeight="50.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/PlayerDraw.png" />
+                     </image>
+                     <StackPane.margin>
+                        <Insets bottom="190.0" />
+                     </StackPane.margin>
+                  </ImageView>
+                  <ImageView fx:id="imgDraw" fitHeight="50.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/PlayerDraw.png" />
+                     </image>
+                     <StackPane.margin>
+                        <Insets bottom="190.0" />
+                     </StackPane.margin>
+                  </ImageView>
+               </children>
             </StackPane>
          </children>
          <padding>
             <Insets top="250.0" />
          </padding>
       </StackPane>
-      <StackPane layoutX="220.0" layoutY="60.0" maxWidth="850.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="40.0">
+      <StackPane layoutX="220.0" layoutY="60.0" maxWidth="850.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="210.0" AnchorPane.topAnchor="30.0">
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#2f2f31" height="150.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="800.0" />
             <Rectangle fx:id="imgCrossPartOne" arcHeight="5.0" arcWidth="5.0" fill="#ff2989" height="200.0" layoutX="292.0" layoutY="40.0" rotate="135.0" scaleX="0.22" scaleY="0.22" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="36.0">
@@ -674,17 +717,23 @@
             </Label>
          </children>
       </StackPane>
-      <StackPane layoutY="942.0" prefHeight="82.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <StackPane layoutY="942.0" prefHeight="82.0" prefWidth="1280.0" stylesheets="@../css/Style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Button fx:id="btnNewGame" mnemonicParsing="false" onAction="#clickNewGame" prefHeight="40.0" prefWidth="200.0" text="New Game">
+            <Button fx:id="btnNewGame" mnemonicParsing="false" onAction="#clickNewGame" prefHeight="40.0" prefWidth="200.0" text="New Game" textFill="WHITE" visible="false">
                <StackPane.margin>
-                  <Insets left="380.0" />
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="18.0" />
                </StackPane.margin>
+               <font>
+                  <Font name="Montserrat Medium" size="16.0" />
+               </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#clickMainMenu" prefHeight="40.0" prefWidth="200.0" text="Main Menu">
+            <Button fx:id="btnMainMenu" mnemonicParsing="false" onAction="#clickMainMenu" prefHeight="40.0" prefWidth="200.0" text="Main Menu" textFill="WHITE">
                <StackPane.margin>
-                  <Insets />
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="18.0" />
                </StackPane.margin>
+               <font>
+                  <Font name="Montserrat Medium" size="16.0" />
+               </font>
             </Button>
          </children>
       </StackPane>
