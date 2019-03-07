@@ -124,11 +124,11 @@ public class GregBot implements IBot{
         {
             randomPlay(tempState);
         }
-        if(isWin(tempState) &&  (tempState.getMoveNumber()+1)%2 == opponent)
+        if(isWin(tempState) &&  (tempState.getMoveNumber())%2 == opponent)
         {
             return 0;
         }
-        else if(isWin(tempState) && (tempState.getMoveNumber()+1)%2 == (opponent+1)%2)
+        else if(isWin(tempState) && (tempState.getMoveNumber())%2 == (opponent+1)%2)
         {
             return 50;
         }
@@ -406,13 +406,29 @@ public class GregBot implements IBot{
     private boolean isGameOver(IGameState state)
     {
         String[][] macroboard = state.getField().getMacroboard();
-        return isWinOnBoard(macroboard, 0, 0) || state.getField().isFull();
+        return isWinOnBoard(macroboard, 0, 0) || isDraw(state);
     }
     
     private boolean isWin(IGameState state)
     {
         String[][] macroboard = state.getField().getMacroboard();
         return isWinOnBoard(macroboard, 0, 0);
+    }
+    
+    private boolean isDraw(IGameState state)
+    {
+        String[][] macroboard = state.getField().getMacroboard();
+        for(int x = 0; x < macroboard.length; x++)
+        {
+            for(int y = 0; y < macroboard[x].length; y++)
+            {
+                if(macroboard[x][y].equals(IField.EMPTY_FIELD) || macroboard[x][y].equals(IField.AVAILABLE_FIELD))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
     private boolean isWinOnBoard(String[][] board, int startingX, int startingY)
