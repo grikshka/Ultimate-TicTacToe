@@ -14,9 +14,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,6 +29,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -65,9 +70,24 @@ public class GameViewController implements Initializable {
     @FXML
     private Button btnNewGame;
     @FXML
+    private Button btnMainMenu;
+    @FXML
     private Label lblPlayer1Score;
     @FXML
     private Label lblPlayer2Score;
+    @FXML
+    private Rectangle rctGameOver;
+    @FXML
+    private Label lblWinner;
+    @FXML
+    private Label lblDraw;
+    @FXML
+    private ImageView imgWinner;
+    @FXML
+    private ImageView imgDraw;
+    @FXML
+    private StackPane stcGameOver;
+
     
     public GameViewController()
     {
@@ -82,7 +102,6 @@ public class GameViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) 
     {
         initializeBoard();
-        setControlButtons();
         checkForSimulationMode();
     }    
     
@@ -120,11 +139,6 @@ public class GameViewController implements Initializable {
         }
     }
 
-    private void setControlButtons()
-    {
-        btnNewGame.setVisible(false);
-    }
-    
     private void checkForSimulationMode()
     {
         if(mode == GameMode.BotVsBot)
@@ -235,7 +249,8 @@ public class GameViewController implements Initializable {
         private void updateBoard(int player, int fieldXPosition, int fieldYPosition)
     {
         Button field = board.get(fieldXPosition).get(fieldYPosition);
-        field.setGraphic(getPlayerMarker(player));
+        ImageView imageView = new ImageView(getPlayerMarker(player));
+        field.setGraphic(imageView);
         ParallelTransition transition = AnimationUtil.createFieldAnimation((ImageView) field.getGraphic());
         transition.play();
     }
@@ -269,7 +284,6 @@ public class GameViewController implements Initializable {
                     {
                         board.get(x).get(y).setDisable(false);
                     }
-
                 }
             }
         }
@@ -291,22 +305,78 @@ public class GameViewController implements Initializable {
     {
         StackPane microboardField = (StackPane) microboard.getParent();
         microboard.setVisible(false);
-        microboardField.getChildren().add(getPlayerMarker(microboardWinner));
+        microboardField.setMouseTransparent(true);
+        ImageView imageView = new ImageView(getPlayerMarkerMicroboard(microboardWinner));
+        microboardField.getChildren().add(imageView);
+        ParallelTransition transition = AnimationUtil.createMicroboardAnimation(imageView);
+        transition.play();
     }
     
     private void setGameOver(int winner)
     {
         grdGameboard.setDisable(true);
         incrementPlayerScore(winner);
-        StackPane gameboardField = (StackPane) grdGameboard.getParent();
-        gameboardField.getChildren().add(new Label(getPlayerMarker(winner) + " won the game"));
+        if(model.getGameMode() != GameMode.BotVsBot)
+        {
+            showGameOverAnimation(getPlayerMarker(winner));
+            showSlideOptionButtons();
+        }
     }
+    
+    private void showGameOverAnimation(Image imageWinner)
+    {
+        stcGameOver.setVisible(true);
+        imgDraw.setVisible(false);
+        lblDraw.setVisible(false);
+        imgWinner.setImage(imageWinner);
+        ParallelTransition transition = AnimationUtil.createGameOverAnimation(rctGameOver);
+        transition.play();
+        List<Node> elements = new ArrayList();
+        elements.add(imgWinner);
+        elements.add(lblWinner);
+        ParallelTransition fade = AnimationUtil.createFadingInAnimation(elements);
+        fade.play();
+    }        
     
     private void setDraw()
     {
+        btnNewGame.setVisible(true);
         grdGameboard.setDisable(true);
-        StackPane gameboardField = (StackPane) grdGameboard.getParent();
-        gameboardField.getChildren().add(new Label("Draw"));
+        if(model.getGameMode() != GameMode.BotVsBot)
+        {
+            showGameOverAnimation();
+            showSlideOptionButtons();
+        }
+    }
+    
+    private void showGameOverAnimation()
+    {
+        stcGameOver.setVisible(true);
+        imgWinner.setVisible(false);
+        lblWinner.setVisible(false);
+        ParallelTransition transition = AnimationUtil.createGameOverAnimation(rctGameOver);
+        transition.play();
+        List<Node> elements = new ArrayList();
+        elements.add(imgWinner);
+        elements.add(lblWinner);
+        ParallelTransition fade = AnimationUtil.createFadingInAnimation(elements);
+        fade.play();
+    }    
+    
+    private void showSlideOptionButtons()
+    {
+        TranslateTransition transition = AnimationUtil.createHorizontalSlide(0, -250, btnMainMenu);
+        transition.setOnFinished(e -> {
+            btnNewGame.setVisible(true);
+            List<Node> elements = new ArrayList();
+            elements.add(btnNewGame);
+            TranslateTransition trans = AnimationUtil.createHorizontalSlide(0, 250, btnNewGame);
+            ParallelTransition fade = AnimationUtil.createFadingInAnimation(elements);
+            fade.getChildren().add(trans);
+            fade.play();
+            
+        });
+        transition.play();
     }
     
     private void setPlayerPointer(int currentPlayer)
@@ -364,15 +434,33 @@ public class GameViewController implements Initializable {
         return microboardPosition;
     }
     
-    private ImageView getPlayerMarker(int playerNumber)
+    private Image getPlayerMarker(int playerNumber)
     {
+        Image image;
         if(playerNumber == 0)
         {
-            return new ImageView("/ultimatetictactoe/gui/images/PlayerOne.png");
+            image = new Image("/ultimatetictactoe/gui/images/PlayerOne.png");
+            return image;
         }
         else
         {
-            return new ImageView("/ultimatetictactoe/gui/images/PlayerTwo.png");
+            image = new Image("/ultimatetictactoe/gui/images/PlayerTwo.png");
+            return image;
+        }
+    }
+    
+    private Image getPlayerMarkerMicroboard(int playerNumber)
+    {
+        Image image;
+        if(playerNumber == 0)
+        {
+            image = new Image("/ultimatetictactoe/gui/images/PlayerOneMicroboard.png");
+            return image;
+        }
+        else
+        {
+            image = new Image("/ultimatetictactoe/gui/images/PlayerTwoMicroboard.PNG");
+            return image;
         }
     }
     
@@ -382,11 +470,13 @@ public class GameViewController implements Initializable {
         {
             int updatedScore = Integer.parseInt(lblPlayer1Score.getText())+1;
             lblPlayer1Score.setText(updatedScore + "");
+            lblWinner.setText(lblPlayer1.getText() + " won!");
         }
         else
         {
             int updatedScore = Integer.parseInt(lblPlayer2Score.getText())+1;
             lblPlayer2Score.setText(updatedScore + "");
+            lblWinner.setText(lblPlayer2.getText() + " won!");
         }
     }
     
@@ -400,13 +490,21 @@ public class GameViewController implements Initializable {
     private void clickNewGame(ActionEvent event) 
     {
         model.restartGame();
-        
-        //removes label with winner from the view
-        ((StackPane)grdGameboard.getParent()).getChildren().removeIf(node -> !(node instanceof GridPane));
-        
+        hideGameOverElements();       
         clearGameboard();
         setPlayerPointer(model.getCurrentPlayer());
         checkForSimulationMode();
+    }
+    
+    private void hideGameOverElements()
+    {
+        if(model.getGameMode() != GameMode.BotVsBot)
+        {
+            stcGameOver.setVisible(false); 
+            btnNewGame.setVisible(false);
+            TranslateTransition transition = AnimationUtil.createHorizontalSlide(-250, 0, btnMainMenu);
+            transition.play();
+        }
     }
     
     private void clearGameboard()
@@ -427,6 +525,7 @@ public class GameViewController implements Initializable {
                         field.setGraphic(null);
                     }
                     microboard.setVisible(true);
+                    microboardField.setMouseTransparent(false);
                 }
                 else
                 {
@@ -459,3 +558,4 @@ public class GameViewController implements Initializable {
     }
     
 }
+
