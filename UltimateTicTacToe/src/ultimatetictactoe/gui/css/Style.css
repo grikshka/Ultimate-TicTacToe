@@ -104,3 +104,12 @@ and open the template in the editor.
     -fx-background-color:#212122;
     -fx-text-fill:white;   
 }
+
+.rectangle
+{
+    -fx-fill:white
+}
+.rectangle:disabled
+{
+    -fx-fill:#a1a1a1;
+}
