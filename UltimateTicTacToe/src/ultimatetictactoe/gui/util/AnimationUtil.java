@@ -28,13 +28,18 @@ public class AnimationUtil {
     public static String crossColor = "0xff2989";
     public static String circleColor = "0x4deee9";
 
-    public static TranslateTransition createHorizontalSlide(int startingPosition, int endingPosition, Node element)
+    public static ParallelTransition createHorizontalSlide(int startingPosition, int endingPosition, List<Node> elements)        
     {
-        int slideDuration = 150;     
-        TranslateTransition translate = new TranslateTransition(Duration.millis(slideDuration), element);
-        translate.setFromX(startingPosition);
-        translate.setToX(endingPosition);       
-        return translate;
+        int slideDuration = 150;
+        ParallelTransition transition = new ParallelTransition();
+        for(Node e: elements)
+        {
+            TranslateTransition translate = new TranslateTransition(Duration.millis(slideDuration), e);
+            translate.setFromX(startingPosition);
+            translate.setToX(endingPosition);
+            transition.getChildren().addAll(translate);
+        }
+        return transition;
     }
     
     public static ParallelTransition createFadingInAnimation(List<Node> elements)
@@ -123,10 +128,10 @@ public class AnimationUtil {
     {
         ParallelTransition transition = new ParallelTransition();
         ScaleTransition scale = new ScaleTransition(Duration.millis(200), field);
-        scale.setFromX(0.3);
-        scale.setFromY(0.3);
-        scale.setByX(1.5);
-        scale.setByY(1.5);
+        scale.setFromX(0.2);
+        scale.setFromY(0.2);
+        scale.setByX(0.6);
+        scale.setByY(0.6);
         transition.getChildren().addAll(scale);
         return transition;
     }
