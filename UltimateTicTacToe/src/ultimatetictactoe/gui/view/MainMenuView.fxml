@@ -13,13 +13,13 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #404241;" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ultimatetictactoe.gui.controller.MainMenuViewController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #404241;" stylesheets="@../css/Style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ultimatetictactoe.gui.controller.MainMenuViewController">
    <children>
       <StackPane layoutY="-11.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <StackPane>
                <children>
-                  <JFXButton focusTraversable="false" onAction="#clickExit" prefHeight="40.0" prefWidth="150.0" ripplerFill="WHITE" style="-fx-background-color: transparent;" text="Exit" textFill="WHITE">
+                  <JFXButton accessibleRole="DATE_PICKER" depthTest="DISABLE" focusTraversable="false" onAction="#clickExit" prefHeight="40.0" prefWidth="150.0" ripplerFill="WHITE" style="-fx-background-color: transparent;" text="Exit" textFill="WHITE">
                      <font>
                         <Font name="Montserrat Medium" size="18.0" />
                      </font>
@@ -27,11 +27,6 @@
                         <Insets top="530.0" />
                      </StackPane.margin>
                   </JFXButton>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1a1a1" height="6.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="203.0">
-                     <StackPane.margin>
-                        <Insets bottom="360.0" />
-                     </StackPane.margin>
-                  </Rectangle>
                   <ToggleButton fx:id="btnPlayerVsPlayer" mnemonicParsing="false" onAction="#clickPlayerVsPlayer" prefHeight="40.0" prefWidth="200.0" text="Player vs Player" textFill="WHITE">
                      <toggleGroup>
                         <ToggleGroup fx:id="GameMode" />
@@ -101,12 +96,17 @@
                         <Insets bottom="500.0" left="270.0" />
                      </StackPane.margin>
                   </ImageView>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1a1a1" height="6.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="203.0">
+                  <Rectangle fx:id="rctPlayerVsBot" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#a1a1a1" height="6.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="rectangle" width="203.0">
+                     <StackPane.margin>
+                        <Insets bottom="360.0" />
+                     </StackPane.margin>
+                  </Rectangle>
+                  <Rectangle fx:id="rctBotVsBot" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#a1a1a1" height="6.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="rectangle" width="203.0">
                      <StackPane.margin>
                         <Insets bottom="360.0" right="-450.0" />
                      </StackPane.margin>
                   </Rectangle>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="6.0" layoutX="309.0" layoutY="127.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="203.0">
+                  <Rectangle fx:id="rctPlayerVsPlayer" accessibleRole="CHECK_BOX" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="6.0" layoutX="309.0" layoutY="127.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="rectangle" width="203.0">
                      <StackPane.margin>
                         <Insets bottom="360.0" right="450.0" />
                      </StackPane.margin>
