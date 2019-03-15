@@ -14,13 +14,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -51,6 +48,7 @@ public class GameViewController implements Initializable {
     private GameModel model;
     private GameMode mode;
     private HashMap<Integer, HashMap<Integer, Button>> board = new HashMap();
+    private Thread botThread = new Thread();
     private int activePointer = 0;
     
     @FXML
@@ -150,7 +148,7 @@ public class GameViewController implements Initializable {
     private void performBotVsBotSimulation()
     {
         grdGameboard.setDisable(true);
-        Thread t = new Thread(new Runnable() {
+        botThread = new Thread(new Runnable() {
             @Override
             public void run() 
             {
@@ -169,7 +167,7 @@ public class GameViewController implements Initializable {
                 }
             }
         });
-        t.start();
+        botThread.start();
     }
     
     @FXML
@@ -187,7 +185,7 @@ public class GameViewController implements Initializable {
     private void imitateBotMove()
     {
         grdGameboard.setDisable(true);
-        Thread t = new Thread(new Runnable() {
+        botThread = new Thread(new Runnable() {
             @Override
             public void run() 
             {
@@ -207,7 +205,7 @@ public class GameViewController implements Initializable {
                 }
             }
         });
-        t.start();
+        botThread.start();
     }
     
     private boolean performBotMove()
@@ -365,12 +363,14 @@ public class GameViewController implements Initializable {
     
     private void showSlideOptionButtons()
     {
-        TranslateTransition transition = AnimationUtil.createHorizontalSlide(0, -250, btnMainMenu);
+        List<Node> nodes = new ArrayList();
+        nodes.add(btnMainMenu);
+        ParallelTransition transition = AnimationUtil.createHorizontalSlide(0, -250, nodes);
         transition.setOnFinished(e -> {
             btnNewGame.setVisible(true);
             List<Node> elements = new ArrayList();
             elements.add(btnNewGame);
-            TranslateTransition trans = AnimationUtil.createHorizontalSlide(0, 250, btnNewGame);
+            ParallelTransition trans = AnimationUtil.createHorizontalSlide(0, 250, elements);
             ParallelTransition fade = AnimationUtil.createFadingInAnimation(elements);
             fade.getChildren().add(trans);
             fade.play();
@@ -494,6 +494,15 @@ public class GameViewController implements Initializable {
         clearGameboard();
         setPlayerPointer(model.getCurrentPlayer());
         checkForSimulationMode();
+        checkForBotMove();
+    }
+    
+    private void checkForBotMove()
+    {
+        if(model.getGameMode() == GameMode.HumanVsBot && model.getCurrentPlayer() == 1)
+        {
+            imitateBotMove();
+        }
     }
     
     private void hideGameOverElements()
@@ -502,7 +511,9 @@ public class GameViewController implements Initializable {
         {
             stcGameOver.setVisible(false); 
             btnNewGame.setVisible(false);
-            TranslateTransition transition = AnimationUtil.createHorizontalSlide(-250, 0, btnMainMenu);
+            List<Node> elements = new ArrayList();
+            elements.add(btnMainMenu);
+            ParallelTransition transition = AnimationUtil.createHorizontalSlide(-250, 0, elements);
             transition.play();
         }
     }
@@ -539,6 +550,7 @@ public class GameViewController implements Initializable {
     @FXML
     private void clickMainMenu(ActionEvent event) throws IOException 
     {
+        botThread.stop();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ultimatetictactoe/gui/view/MainMenuView.fxml"));
         Parent root = fxmlLoader.load();   
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
